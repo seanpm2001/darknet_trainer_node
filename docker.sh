@@ -21,35 +21,38 @@ then
     exit
 fi
 
+# sourcing .env file to get configuration (see README.md)
+. .env || echo "you should provide an .env file with USERNAME and PASSWORD for the Learning Loop"
+
 cmd=$1
 cmd_args=${@:2}
 case $cmd in
     b | build)
         docker kill darknet_trainer
         docker rm darknet_trainer # remove existing container
-        docker build . --build-arg INSTALL_DEV=true -t zauberzeug/darknet-trainer-node:latest $cmd_args
+        docker build . --build-arg CONFIG=gpu-cv-cc75 -t zauberzeug/darknet-trainer-node:latest $cmd_args
         ;;
     r | run)
-        nvidia-docker run -it -v $(pwd):/app -e ORGANIZATION=zauberzeug -e PROJECT=test --rm --name darknet_trainer --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all -p 8004:80 zauberzeug/darknet-trainer-node:latest $cmd_args
+        nvidia-docker run -it -v $(pwd)/app:/app -v $(pwd)/data:/data -e USERNAME=$USERNAME -e PASSWORD=$PASSWORD --rm --name darknet_trainer --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all -p 8004:80 zauberzeug/darknet-trainer-node:latest $cmd_args
         ;;
     s | stop)
-        docker stop tkdnn_detector $cmd_args
+        docker stop darknet_trainer $cmd_args
         ;;
     k | kill)
-        docker kill tkdnn_detector $cmd_args
+        docker kill darknet_trainer $cmd_args
         ;;
     d | rm)
-        docker kill tkdnn_detector
-        docker rm tkdnn_detector $cmd_args
+        docker kill darknet_trainer
+        docker rm darknet_trainer $cmd_args
         ;;
     l | log | logs)
-        docker logs -f --tail 100 $cmd_args tkdnn_detector
+        docker logs -f --tail 100 $cmd_args darknet_trainer
         ;;
     e | exec)
-        docker exec $cmd_args tkdnn_detector
+        docker exec $cmd_args darknet_trainer
         ;;
     a | attach)
-        docker exec -it $cmd_args tkdnn_detector /bin/bash
+        docker exec -it $cmd_args darknet_trainer /bin/bash
         ;;
     *)
         echo "Unsupported command \"$cmd\""
