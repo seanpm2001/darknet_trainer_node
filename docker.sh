@@ -5,6 +5,7 @@ then
     echo "Usage:"
     echo
     echo "  `basename $0` (b | build)        Build"
+    echo "  `basename $0` (d | debug)        Run with debugger"
     echo "  `basename $0` (r | run)          Run"
     echo "  `basename $0` (d | rm)           Remove Container"
     echo "  `basename $0` (s | stop)         Stop"
@@ -32,8 +33,11 @@ case $cmd in
         docker rm darknet_trainer # remove existing container
         docker build . --build-arg CONFIG=gpu-cv-cc75 -t zauberzeug/darknet-trainer-node:latest $cmd_args
         ;;
+    d | debug)
+        cmd_args="/app/start.sh debug"
+        ;& # fall through to run line
     r | run)
-        nvidia-docker run -it -v $(pwd)/app:/app -v $(pwd)/data:/data -e USERNAME=$USERNAME -e PASSWORD=$PASSWORD --rm --name darknet_trainer --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all -p 8004:80 zauberzeug/darknet-trainer-node:latest $cmd_args
+        nvidia-docker run -it -v $(pwd)/app:/app -v $(pwd)/data:/data $run_args -e HOST=$HOST -e USERNAME=$USERNAME -e PASSWORD=$PASSWORD --rm --name darknet_trainer --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all -p 8003:80 zauberzeug/darknet-trainer-node:latest $cmd_args
         ;;
     s | stop)
         docker stop darknet_trainer $cmd_args
