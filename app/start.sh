@@ -5,6 +5,5 @@ if [[ $1 = "debug" ]]; then
 elif [[ $1 = "profile" ]]; then
     kernprof -l /app/main.py
 else
-    export MAX_WORKERS=1
-    gunicorn -k "uvicorn.workers.UvicornWorker" -c /gunicorn_conf.py "main:node"
+   python3 /app/main.py
 fi

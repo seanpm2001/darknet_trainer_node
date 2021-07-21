@@ -24,7 +24,7 @@ RUN $VSCODE_SERVER --install-extension ms-python.vscode-pylance \
     $VSCODE_SERVER --install-extension littlefoxteam.vscode-python-test-adapter
 
 RUN python3 -m pip install --upgrade pip
-RUN python3 -m pip install --no-cache-dir "uvicorn[standard]" gunicorn "learning-loop-node==0.2.1" async_generator aiofiles retry debugpy pytest-asyncio psutil icecream psutil pytest autopep8
+RUN python3 -m pip install --no-cache-dir "uvicorn[standard]" gunicorn "learning-loop-node==0.2.4" async_generator aiofiles retry debugpy pytest-asyncio psutil icecream psutil pytest autopep8
 
 WORKDIR /app/
 RUN mkdir -p /data

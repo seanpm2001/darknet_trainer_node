@@ -37,7 +37,7 @@ case $cmd in
         cmd_args="/app/start.sh debug"
         ;& # fall through to run line
     r | run)
-        nvidia-docker run -it -v $(pwd)/app:/app -v $(pwd)/data:/data $run_args -e HOST=$HOST -e USERNAME=$USERNAME -e PASSWORD=$PASSWORD --rm --name darknet_trainer --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all -p 8003:80 zauberzeug/darknet-trainer-node:latest $cmd_args
+        nvidia-docker run -it --memory 20g -v $(pwd)/app:/app -v $(pwd)/data:/data $run_args -e HOST=$HOST -e USERNAME=$USERNAME -e PASSWORD=$PASSWORD --rm --name darknet_trainer --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all -p 8003:80 zauberzeug/darknet-trainer-node:latest $cmd_args
         ;;
     s | stop)
         docker stop darknet_trainer $cmd_args
