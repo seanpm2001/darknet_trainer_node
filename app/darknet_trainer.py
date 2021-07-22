@@ -23,7 +23,7 @@ class DarknetTrainer(Trainer):
         cfg_file = yolo_cfg_helper._find_cfg_file(training_path)
 
         # NOTE we have to write the pid inside the bash command to get the correct pid.
-        cmd = f'cd {training_path};nohup /darknet/darknet detector train data.txt {cfg_file} {weightfile} -dont_show -map >> last_training.log 2>&1 & echo $! > last_training.pid'
+        cmd = f'cd {training_path};nohup /darknet/darknet detector train data.txt {cfg_file} {weightfile} -dont_show -map -clear >> last_training.log 2>&1 & echo $! > last_training.pid'
         p = subprocess.Popen(cmd, shell=True)
         _, err = p.communicate()
         if p.returncode != 0:
