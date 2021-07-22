@@ -3,7 +3,7 @@ FROM nvidia/cuda:11.0.3-cudnn8-devel-ubuntu20.04
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt update && apt-get install -y curl python3.8 python3-distutils python3-pip git-all vim build-essential libopencv-dev  && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt update && apt-get install -y curl python3.8 python3-distutils python3-pip git-all vim build-essential libopencv-dev jpeginfo && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN ln -sf /usr/bin/python3.8 /usr/bin/python3 && ln -sf /usr/bin/python3.8 /usr/bin/python
 
 # darknet
@@ -24,7 +24,7 @@ RUN $VSCODE_SERVER --install-extension ms-python.vscode-pylance \
     $VSCODE_SERVER --install-extension littlefoxteam.vscode-python-test-adapter
 
 RUN python3 -m pip install --upgrade pip
-RUN python3 -m pip install --no-cache-dir "uvicorn[standard]" gunicorn "learning-loop-node==0.2.4" async_generator aiofiles retry debugpy pytest-asyncio psutil icecream psutil pytest autopep8
+RUN python3 -m pip install --no-cache-dir "uvicorn[standard]" "learning-loop-node==0.2.6" async_generator aiofiles retry debugpy pytest-asyncio psutil icecream psutil pytest autopep8
 
 WORKDIR /app/
 RUN mkdir -p /data

@@ -25,35 +25,49 @@ fi
 # sourcing .env file to get configuration (see README.md)
 . .env || echo "you should provide an .env file with USERNAME and PASSWORD for the Learning Loop"
 
+name="darknet_trainer"
+
+args="-it --rm" 
+args+=" -v $(pwd)/app:/app"
+args+=" -v $(pwd)/data:/data"
+args+=" -v $(pwd)/../learning_loop_node/learning_loop_node:/usr/local/lib/python3.8/dist-packages/learning_loop_node"
+args+=" -e HOST=$HOST"
+args+=" -e USERNAME=$USERNAME -e PASSWORD=$PASSWORD"
+args+=" --name $name"
+args+=" --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all"
+args+=" -p 8003:80"
+
+image="zauberzeug/darknet-trainer-node:latest"
+
 cmd=$1
 cmd_args=${@:2}
 case $cmd in
     b | build)
         docker kill darknet_trainer
         docker rm darknet_trainer # remove existing container
-        docker build . --build-arg CONFIG=gpu-cv-cc75 -t zauberzeug/darknet-trainer-node:latest $cmd_args
+        docker build . --build-arg CONFIG=gpu-cv-cc75 -t $image
         ;;
     d | debug)
-        cmd_args="/app/start.sh debug"
-        ;& # fall through to run line
+        nvidia-docker run $args $image /app/start.sh debug
+        ;;
     r | run)
-        nvidia-docker run -it --memory 20g -v $(pwd)/app:/app -v $(pwd)/data:/data $run_args -e HOST=$HOST -e USERNAME=$USERNAME -e PASSWORD=$PASSWORD --rm --name darknet_trainer --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all -p 8003:80 zauberzeug/darknet-trainer-node:latest $cmd_args
+        nvidia-docker run $args $image
         ;;
     s | stop)
-        docker stop darknet_trainer $cmd_args
+        docker stop $name $cmd_args
         ;;
     k | kill)
-        docker kill darknet_trainer $cmd_args
+        docker kill $name $cmd_args
         ;;
     d | rm)
-        docker kill darknet_trainer
-        docker rm darknet_trainer $cmd_args
+        docker kill $name
+        docker rm $name $cmd_args
         ;;
     l | log | logs)
-        docker logs -f --tail 100 $cmd_args darknet_trainer
+        docker logs -f --tail 100 $cmd_args $name
         ;;
     e | exec)
-        docker exec $cmd_args darknet_trainer
+        docker exec $name $cmd_args 
         ;;
     a | attach)
         docker exec -it $cmd_args darknet_trainer /bin/bash
