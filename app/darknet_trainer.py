@@ -10,6 +10,7 @@ import subprocess
 import os
 import psutil
 import model_updater
+import logging
 
 
 class DarknetTrainer(Trainer):
@@ -58,8 +59,14 @@ class DarknetTrainer(Trainer):
                 p = psutil.Process(int(pid))
             except psutil.NoSuchProcess as e:
                 return False
-            if p.name() == 'darknet':
-                return True
+            if p.name() != 'darknet':
+                return False
+
+            with open(f'{training_folder}/last_training.log') as f:
+                if 'CUDA Error: out of memory' in f.readlines():
+                    logging.error('graphics card is out of memory')
+                    return False
+            return True
         except:
             traceback.print_exc()
         return False
@@ -86,11 +93,11 @@ class DarknetTrainer(Trainer):
         shutil.move(weightfile_path, new_filename)
 
     def stop_training(self) -> None:
-        cmd = f'cd {self.training.training_folder};kill -9 `cat last_training.pid`; rm last_training.pid'
+        cmd = f'cd {self.training.training_folder};kill -9 `cat last_training.pid` || echo "no such file"; rm -f last_training.pid'
         p = subprocess.Popen(cmd, shell=True)
-        _, err = p.communicate()
+        std, err = p.communicate()
         if p.returncode != 0:
-            raise Exception(f'Failed to stop training with error: {err}')
+            raise Exception(f'Failed to stop training with error: {std}, {err}')
 
     def _show_log(self) -> str:
         if not self.training:
