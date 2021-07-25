@@ -1,5 +1,5 @@
 from typing import List, Optional
-
+import logging
 
 class LogParser:
     def __init__(self, iteration_log_lines: List[str]):
@@ -7,21 +7,9 @@ class LogParser:
 
     @staticmethod
     def extract_iteration_log(log: str) -> Optional[List[str]]:
-        match = '(next mAP calculation at'
-        last_index = None
-        pre_last_index = None
-        log_lines = log.splitlines()
-        for i in range(len(log_lines) - 1, 0, -1):
-            line = log_lines[i]
-            if match in line:
-                if not last_index:
-                    last_index = i
-                elif not pre_last_index:
-                    pre_last_index = i
-                    break
-        if not pre_last_index:
-            return None
-        return log_lines[pre_last_index:last_index]
+        iterations = reversed(log.split('(next mAP calculation at '))
+        latest_mAP = next((i for i in iterations if 'calculation mAP (mean average precision)' in i), '\n')
+        return latest_mAP.splitlines()[:-1]
 
     def parse_mAP(self) -> Optional[dict]:
         match = 'mean average precision'
