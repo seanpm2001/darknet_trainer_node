@@ -12,6 +12,7 @@ import psutil
 import model_updater
 import logging
 
+logging.basicConfig(level=logging.DEBUG)
 
 class DarknetTrainer(Trainer):
     latest_published_iteration: Union[int, None]
