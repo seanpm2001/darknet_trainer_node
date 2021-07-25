@@ -28,15 +28,15 @@ def create_project():
 
 @pytest.mark.asyncio
 async def test_start_stop_training():
-    model_id = trainer_test_helper.assert_upload_model(
-        ['darknet_tests/test_data/tiny_yolo.cfg', 'darknet_tests/test_data/fake_weightfile.weights'])
+    model_id = await trainer_test_helper.assert_upload_model(
+        ['tests/integration/data/tiny_yolo.cfg', 'tests/integration/data/fake_weightfile.weights'])
 
     darknet_trainer = darknet_test_helper.create_darknet_trainer()
     downloader = darknet_test_helper.create_downloader()
 
     assert darknet_trainer.is_training_alive() == False
     context = Context(organization='zauberzeug', project='pytest')
-    await darknet_trainer.begin_training(context=context, source_model={'id': model_id}, downloader=downloader)
+    await darknet_trainer.begin_training(context=context, source_model={'id': model_id})
     await asyncio.sleep(1)
     assert darknet_trainer.is_training_alive() == True
 

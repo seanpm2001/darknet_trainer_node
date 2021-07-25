@@ -20,7 +20,7 @@ def downloader() -> Downloader:
 
 @pytest.mark.asyncio
 async def test_parse_latest_confusion_matrix(downloader: Downloader):
-    model_id = trainer_test_helper.assert_upload_model(
+    model_id = await trainer_test_helper.assert_upload_model(
         ['darknet_tests/test_data/tiny_yolo.cfg', 'darknet_tests/test_data/fake_weightfile.weights'])
     context = Context(organization='zauberzeug', project='pytest')
     training = Trainer.generate_training(context, {'id': 'some_uuid'})
@@ -51,7 +51,7 @@ async def test_parse_latest_confusion_matrix(downloader: Downloader):
 ])
 @pytest.mark.asyncio
 async def test_iteration_needs_weightfile_to_be_valid(filename: str, is_valid_model: bool, downloader: Downloader):
-    model_id = trainer_test_helper.assert_upload_model(
+    model_id = await trainer_test_helper.assert_upload_model(
         ['darknet_tests/test_data/tiny_yolo.cfg', 'darknet_tests/test_data/fake_weightfile.weights'])
     context = Context(organization='zauberzeug', project='pytest')
     training = Trainer.generate_training(context, {'id': 'some_uuid'})

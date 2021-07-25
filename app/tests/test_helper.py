@@ -17,17 +17,17 @@ def get_files_from_data_folder():
 
 
 def create_darknet_trainer() -> DarknetTrainer:
-    return DarknetTrainer(uuid='c34dc41f-9b76-4aa9-8b8d-9d27e33a19e4',
+    return DarknetTrainer(uuid='c34dc41f-9b76-4aa9-8b8d-9d27e33a19e4', model_format='yolo',
                           name='darknet trainer', capability=Capability.Box)
 
 
 def create_downloader() -> Downloader:
     context = Context(organization='zauberzeug', project='darknet_trainer_tests')
-    return DownloaderFactory.create(server_base_url='https://preview.learning-loop.ai', headers={}, context=context, capability=Capability.Box)
+    return DownloaderFactory.create(context=context, capability=Capability.Box)
 
 
 async def downlaod_data(trainer: Trainer):
-    model_id = trainer_test_helper.assert_upload_model(
+    model_id = await trainer_test_helper.assert_upload_model(
         ['darknet_tests/test_data/tiny_yolo.cfg', 'darknet_tests/test_data/fake_weightfile.weights'])
     context = Context(organization='zauberzeug', project='pytest')
     training = Trainer.generate_training(context, {'id': model_id})
