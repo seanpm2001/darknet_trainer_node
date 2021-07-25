@@ -1,19 +1,18 @@
 import pytest
 import shutil
 import pytest
-import darknet_tests.test_helper as test_helper
 import yolo_helper
 import yolo_cfg_helper
 import os
 import learning_loop_node.trainer.tests.trainer_test_helper as trainer_test_helper
 import helper
-import darknet_tests.test_helper as darknet_test_helper
+from tests import test_helper
 
 
 @pytest.mark.asyncio
 async def test_yolo_box_creation():
-    darknet_trainer = darknet_test_helper.create_darknet_trainer()
-    await darknet_test_helper.downlaod_data(darknet_trainer)
+    darknet_trainer = test_helper.create_darknet_trainer()
+    await test_helper.downlaod_data(darknet_trainer)
     training = darknet_trainer.training
     training_data = training.data
 
@@ -73,8 +72,8 @@ def test_create_data_file():
 async def test_create_image_links():
     assert len(test_helper.get_files_from_data_folder()) == 0
 
-    darknet_trainer = darknet_test_helper.create_darknet_trainer()
-    await darknet_test_helper.downlaod_data(darknet_trainer)
+    darknet_trainer = test_helper.create_darknet_trainer()
+    await test_helper.downlaod_data(darknet_trainer)
     training = darknet_trainer.training
     training_data = training.data
     training_id = training.id
@@ -96,8 +95,8 @@ async def test_create_image_links():
 @pytest.mark.asyncio
 async def test_create_train_and_test_file():
     assert len(test_helper.get_files_from_data_folder()) == 0
-    darknet_trainer = darknet_test_helper.create_darknet_trainer()
-    await darknet_test_helper.downlaod_data(darknet_trainer)
+    darknet_trainer = test_helper.create_darknet_trainer()
+    await test_helper.downlaod_data(darknet_trainer)
     training = darknet_trainer.training
     training_data = training.data
 
@@ -157,8 +156,8 @@ def test_replace_classes_and_filters():
 async def test_create_anchors():
     assert len(test_helper.get_files_from_data_folder()) == 0
 
-    darknet_trainer = darknet_test_helper.create_darknet_trainer()
-    await darknet_test_helper.downlaod_data(darknet_trainer)
+    darknet_trainer = test_helper.create_darknet_trainer()
+    await test_helper.downlaod_data(darknet_trainer)
     training = darknet_trainer.training
     training_data = training.data
 

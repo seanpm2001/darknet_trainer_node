@@ -1,13 +1,12 @@
 from learning_loop_node.trainer.capability import Capability
 from learning_loop_node.node import Node
 from learning_loop_node.trainer.downloader_factory import DownloaderFactory
-from learning_loop_node.trainer.downloader import Downloader
+from learning_loop_node.trainer.downloader import DataDownloader as Downloader
 from learning_loop_node.context import Context
 from learning_loop_node.trainer.trainer import Trainer
 import shutil
 import pytest
-import main
-import darknet_tests.test_helper as test_helper
+import test_helper
 import model_updater
 import learning_loop_node.trainer.tests.trainer_test_helper as trainer_test_helper
 from learning_loop_node import node
@@ -16,8 +15,7 @@ from darknet_trainer import DarknetTrainer
 
 @pytest.fixture
 def downloader() -> Downloader:
-    context = Context(organization='zauberzeug', project='pytest')
-    return DownloaderFactory.create(server_base_url=node.SERVER_BASE_URL_DEFAULT, headers={}, context=context, capability=Capability.Box)
+    return test_helper.create_downloader()
 
 
 @pytest.mark.asyncio

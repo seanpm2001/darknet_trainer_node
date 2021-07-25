@@ -3,7 +3,7 @@ import pytest
 from typing import Generator
 import learning_loop_node.tests.test_helper as test_helper
 import learning_loop_node.trainer.tests.trainer_test_helper as trainer_test_helper
-import darknet_tests.test_helper as darknet_test_helper
+import tests.test_helper as darknet_test_helper
 import shutil
 import os
 import asyncio

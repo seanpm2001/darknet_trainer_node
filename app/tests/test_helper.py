@@ -1,4 +1,4 @@
-from learning_loop_node.trainer.downloader import Downloader
+from learning_loop_node.trainer.downloader import DataDownloader as Downloader
 from learning_loop_node.trainer.downloader_factory import DownloaderFactory
 from learning_loop_node.context import Context
 from learning_loop_node.trainer.trainer import Trainer
@@ -22,8 +22,8 @@ def create_darknet_trainer() -> DarknetTrainer:
 
 
 def create_downloader() -> Downloader:
-    context = Context(organization='zauberzeug', project='pytest')
-    return DownloaderFactory.create(server_base_url=node.SERVER_BASE_URL_DEFAULT, headers={}, context=context, capability=Capability.Box)
+    context = Context(organization='zauberzeug', project='darknet_trainer_tests')
+    return DownloaderFactory.create(server_base_url='https://preview.learning-loop.ai', headers={}, context=context, capability=Capability.Box)
 
 
 async def downlaod_data(trainer: Trainer):
