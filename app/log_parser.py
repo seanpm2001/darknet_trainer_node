@@ -1,6 +1,7 @@
 from typing import List, Optional
 import logging
 
+
 class LogParser:
     def __init__(self, iteration_log_lines: List[str]):
         self.iteration_log_lines = iteration_log_lines
@@ -8,8 +9,8 @@ class LogParser:
     @staticmethod
     def extract_iteration_log(log: str) -> Optional[List[str]]:
         iterations = reversed(log.split('(next mAP calculation at '))
-        latest_mAP = next((i for i in iterations if 'calculation mAP (mean average precision)' in i), '\n')
-        return latest_mAP.splitlines()[:-1]
+        latest_best_mAP = next((i for i in iterations if 'New best mAP!' in i), '\n')
+        return latest_best_mAP.splitlines()[:-1]
 
     def parse_mAP(self) -> Optional[dict]:
         match = 'mean average precision'
@@ -54,4 +55,4 @@ class LogParser:
         for line in self.iteration_log_lines:
             if line.startswith('Saving weights to'):
                 return line.split('Saving weights to')[-1].strip().replace('//', '/')
-        return None
+        raise Exception('no weightfile found in ' + self.iteration_log_lines)
