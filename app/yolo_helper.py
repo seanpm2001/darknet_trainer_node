@@ -9,6 +9,7 @@ from log_parser import LogParser
 import aiohttp
 from learning_loop_node.node import Node
 from retry import retry
+import numpy as np
 
 
 def to_yolo(learning_loop_box, image_width, image_height, categories):
@@ -47,6 +48,11 @@ async def update_yolo_boxes(image_folder_for_training: str, training_data: Train
 
         yolo_boxes = []
         for box in image['box_annotations']:
+            # size = 20
+            # box['x'], box['y'] = (np.average([box['x'], box['x'] + box['width']])-size/2,
+            #                       np.average([box['y'], box['y'] + box['height']])-size/2)
+            # box['width'] = size
+            # box['height'] = size
             yolo_box = to_yolo(box, image_width, image_height, category_ids)
             yolo_boxes.append(yolo_box)
 
