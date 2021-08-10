@@ -43,8 +43,8 @@ cmd=$1
 cmd_args=${@:2}
 case $cmd in
     b | build)
-        docker kill darknet_trainer
-        docker rm darknet_trainer # remove existing container
+        docker kill $name
+        docker rm $name # remove existing container
         docker build . --build-arg CONFIG=gpu-cv-cc75 -t $image
         ;;
     d | debug)
