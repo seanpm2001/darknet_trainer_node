@@ -29,7 +29,7 @@ name="darknet_trainer"
 
 args="-it --rm" 
 args+=" -v $(pwd)/app:/app"
-args+=" -v $(pwd)/data:/data"
+args+=" -v $HOME/data:/data"
 args+=" -v $(pwd)/../learning_loop_node/learning_loop_node:/usr/local/lib/python3.8/dist-packages/learning_loop_node"
 args+=" -e HOST=$HOST"
 args+=" -e USERNAME=$USERNAME -e PASSWORD=$PASSWORD"
