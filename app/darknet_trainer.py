@@ -1,8 +1,10 @@
 import shutil
-from learning_loop_node.trainer.model import BasicModel, Model
 import traceback
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
+from learning_loop_node.trainer.capability import Capability
+from learning_loop_node.trainer.model import BasicModel, Model
 from learning_loop_node.trainer.trainer import Trainer
+from learning_loop_node.trainer.executor import Executor
 import yolo_helper
 import helper
 import yolo_cfg_helper
@@ -14,8 +16,12 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
+
 class DarknetTrainer(Trainer):
-    latest_published_iteration: Union[int, None]
+
+    def __init__(self, capability: Capability, model_format: str) -> None:
+        super().__init__(capability, model_format)
+        self.latest_published_iteration: Union[int, None] = None
 
     async def start_training(self) -> None:
         await self.prepare_training()
@@ -23,12 +29,7 @@ class DarknetTrainer(Trainer):
         weightfile = yolo_helper.find_weightfile(training_path)
         cfg_file = yolo_cfg_helper._find_cfg_file(training_path)
 
-        # NOTE we have to write the pid inside the bash command to get the correct pid.
-        cmd = f'cd {training_path};nohup /darknet/darknet detector train data.txt {cfg_file} {weightfile} -dont_show -map -clear >> last_training.log 2>&1 & echo $! > last_training.pid'
-        p = subprocess.Popen(cmd, shell=True)
-        _, err = p.communicate()
-        if p.returncode != 0:
-            raise Exception(f'Failed to start training with error: {err}')
+        self.executor.start(f'/darknet/darknet detector train data.txt {cfg_file} {weightfile} -dont_show -map -clear')
 
     async def prepare_training(self) -> None:
         training_folder = self.training.training_folder
@@ -48,29 +49,11 @@ class DarknetTrainer(Trainer):
         yolo_cfg_helper.replace_classes_and_filters(len(box_category_names), training_folder)
         yolo_cfg_helper.update_anchors(training_folder)
 
-    def is_training_alive(self) -> bool:
-        try:
-            training_folder = self.training.training_folder
-            pid_path = f'{training_folder}/last_training.pid'
-            if not os.path.exists(pid_path):
-                return False
-            with open(pid_path, 'r') as f:
-                pid = f.read().strip()
-            try:
-                p = psutil.Process(int(pid))
-            except psutil.NoSuchProcess as e:
-                return False
-            if p.name() != 'darknet':
-                return False
-
-            with open(f'{training_folder}/last_training.log') as f:
-                if 'CUDA Error: out of memory' in f.readlines():
-                    logging.error('graphics card is out of memory')
-                    return False
-            return True
-        except:
-            traceback.print_exc()
-        return False
+    def get_error(self) -> str:
+        if self.executor is None:
+            return
+        if 'CUDA Error: out of memory' in self.executor.get_log():
+            return 'graphics card is out of memory'
 
     def get_model_files(self, model_id) -> List[str]:
         from glob import glob
@@ -94,14 +77,9 @@ class DarknetTrainer(Trainer):
         shutil.move(weightfile_path, new_filename)
 
     def stop_training(self) -> None:
-        cmd = f'cd {self.training.training_folder};kill -9 `cat last_training.pid` || echo "no such file"; rm -f last_training.pid'
-        p = subprocess.Popen(cmd, shell=True)
-        std, err = p.communicate()
-        if p.returncode != 0:
-            raise Exception(f'Failed to stop training with error: {std}, {err}')
+        self.executor.stop()
 
     def _show_log(self) -> str:
         if not self.training:
             raise Exception('no training running')
-        with open(f'{self.training.training_folder}/last_training.log', 'r') as f:
-            return f.read()
+        return self.executor.get_log()

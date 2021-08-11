@@ -29,19 +29,22 @@ def create_project():
 @pytest.mark.asyncio
 async def test_start_stop_training():
     model_id = await trainer_test_helper.assert_upload_model(
-        ['tests/integration/data/tiny_yolo.cfg', 'tests/integration/data/fake_weightfile.weights'])
+        ['tests/integration/data/tiny_yolo.cfg', 'tests/integration/data/fake_weightfile.weights'],
+        'yolo'
+    )
 
     darknet_trainer = darknet_test_helper.create_darknet_trainer()
     downloader = darknet_test_helper.create_downloader()
 
-    assert darknet_trainer.is_training_alive() == False
+    assert darknet_trainer.get_error() is None
     context = Context(organization='zauberzeug', project='pytest')
     await darknet_trainer.begin_training(context=context, source_model={'id': model_id})
     await asyncio.sleep(1)
-    assert darknet_trainer.is_training_alive() == True
+    assert darknet_trainer.get_error() is None
+    assert 'CUDA-version' in darknet_trainer.get_log()
 
     darknet_trainer.stop_training()
-    assert darknet_trainer.is_training_alive() == False
+    assert darknet_trainer.get_error() is None
 
 
 @pytest.mark.asyncio
@@ -49,7 +52,7 @@ async def test_get_model_files():
     darknet_trainer = darknet_test_helper.create_darknet_trainer()
     await darknet_test_helper.downlaod_data(darknet_trainer)
 
-    shutil.copy('darknet_tests/test_data/fake_weightfile.weights',
+    shutil.copy('tests/integration/data/fake_weightfile.weights',
                 f'{darknet_trainer.training.training_folder}/some_model_uuid.weights')
 
     files = darknet_trainer.get_model_files('some_model_uuid')
@@ -69,7 +72,7 @@ async def test_get_new_model():
     os.makedirs(path)
     open(f'{path}/tiny_yolo_best_mAP_0.000000_iteration_1089_avgloss_-nan_.weights', 'a').close()
 
-    shutil.copy('darknet_tests/test_data/last_training.log',
+    shutil.copy('tests/integration/data/last_training.log',
                 f'{darknet_trainer.training.training_folder}/last_training.log')
 
     model = darknet_trainer.get_new_model()

@@ -141,7 +141,7 @@ def test_replace_classes_and_filters():
     shutil.rmtree(target_folder, ignore_errors=True)
     os.makedirs(target_folder)
 
-    shutil.copy('darknet_tests/test_data/tiny_yolo.cfg', f'{target_folder}/yolo.cfg')
+    shutil.copy('tests/integration/data/tiny_yolo.cfg', f'{target_folder}/yolo.cfg')
 
     assert_line_count('filters=45', 0)
     assert_line_count('classes=10', 0)
@@ -187,7 +187,7 @@ async def test_create_anchors():
 def test_find_cfg_file(target_cfg_file):
     _, _, training_path = trainer_test_helper.create_needed_folders()
 
-    shutil.copy(f'darknet_tests/test_data/tiny_yolo.cfg', f'{training_path}/{target_cfg_file}')
+    shutil.copy(f'tests/integration/data/tiny_yolo.cfg', f'{training_path}/{target_cfg_file}')
     found_cfg_file = yolo_cfg_helper._find_cfg_file(training_path)
     assert target_cfg_file in found_cfg_file
 

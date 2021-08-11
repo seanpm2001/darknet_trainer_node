@@ -21,12 +21,12 @@ def downloader() -> Downloader:
 @pytest.mark.asyncio
 async def test_parse_latest_confusion_matrix(downloader: Downloader):
     model_id = await trainer_test_helper.assert_upload_model(
-        ['darknet_tests/test_data/tiny_yolo.cfg', 'darknet_tests/test_data/fake_weightfile.weights'])
+        ['tests/integration/data/tiny_yolo.cfg', 'tests/integration/data/fake_weightfile.weights'])
     context = Context(organization='zauberzeug', project='pytest')
     training = Trainer.generate_training(context, {'id': 'some_uuid'})
     training.data = await downloader.download_data(training.images_folder, training.training_folder, model_id)
 
-    shutil.copy('darknet_tests/test_data/last_training.log', f'{training.training_folder}/last_training.log')
+    shutil.copy('tests/integration/data/last_training.log', f'{training.training_folder}/last_training.log')
 
     new_model = model_updater._parse_latest_iteration(training.id, training.data)
     assert new_model
@@ -52,14 +52,14 @@ async def test_parse_latest_confusion_matrix(downloader: Downloader):
 @pytest.mark.asyncio
 async def test_iteration_needs_weightfile_to_be_valid(filename: str, is_valid_model: bool, downloader: Downloader):
     model_id = await trainer_test_helper.assert_upload_model(
-        ['darknet_tests/test_data/tiny_yolo.cfg', 'darknet_tests/test_data/fake_weightfile.weights'])
+        ['tests/integration/data/tiny_yolo.cfg', 'tests/integration/data/fake_weightfile.weights'])
     context = Context(organization='zauberzeug', project='pytest')
     training = Trainer.generate_training(context, {'id': 'some_uuid'})
     training.data = await downloader.download_data(training.images_folder, training.training_folder, model_id)
     trainer = DarknetTrainer(capability=Capability.Box)
     trainer.training = training
 
-    shutil.copy(f'darknet_tests/test_data/{filename}', f'{training.training_folder}/last_training.log')
+    shutil.copy(f'tests/integration/data/{filename}', f'{training.training_folder}/last_training.log')
 
     new_model = trainer.get_new_model()
     assert is_valid_model == (new_model is not None)

@@ -17,8 +17,7 @@ def get_files_from_data_folder():
 
 
 def create_darknet_trainer() -> DarknetTrainer:
-    return DarknetTrainer(uuid='c34dc41f-9b76-4aa9-8b8d-9d27e33a19e4', model_format='yolo',
-                          name='darknet trainer', capability=Capability.Box)
+    return DarknetTrainer(model_format='yolo', capability=Capability.Box)
 
 
 def create_downloader() -> Downloader:
@@ -28,7 +27,7 @@ def create_downloader() -> Downloader:
 
 async def downlaod_data(trainer: Trainer):
     model_id = await trainer_test_helper.assert_upload_model(
-        ['darknet_tests/test_data/tiny_yolo.cfg', 'darknet_tests/test_data/fake_weightfile.weights'])
+        ['tests/integration/data/tiny_yolo.cfg', 'tests/integration/data/fake_weightfile.weights'], format='yolo')
     context = Context(organization='zauberzeug', project='pytest')
     training = Trainer.generate_training(context, {'id': model_id})
     downloader = create_downloader()

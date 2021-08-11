@@ -99,7 +99,7 @@ def kill_all_darknet_processes() -> bool:
         assert _is_any_darknet_running() == False
         return True
 
-    p = subprocess.Popen('kill -9 `pgrep darknet`', shell=True)
+    p = subprocess.Popen('pkill -f darknet', shell=True)
     p.communicate()
     assert assert_no_darknet_running(), 'No training should run.'
     return True
