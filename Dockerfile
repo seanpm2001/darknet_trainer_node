@@ -13,6 +13,7 @@ WORKDIR /
 RUN git clone https://github.com/zauberzeug/darknet_alexeyAB.git darknet && cd darknet && git checkout 211bb29e9988f6204a32cd38d0720d171135873d 
 RUN cd darknet && /tmp/conf.sh $CONFIG && make clean && make
 
+RUN ls
 RUN curl -sSL https://gist.githubusercontent.com/b01/0a16b6645ab7921b0910603dfb85e4fb/raw/5186ea07a06eac28937fd914a9c8f9ce077a978e/download-vs-code-server.sh | bash
 
 ENV VSCODE_SERVER=/root/.vscode-server/bin/*/server.sh
@@ -25,7 +26,7 @@ RUN $VSCODE_SERVER --install-extension ms-python.vscode-pylance \
 
 RUN python3 -m pip install --upgrade pip
 RUN python3 -m pip install --no-cache-dir "uvicorn[standard]" numpy async_generator aiofiles retry debugpy pytest-asyncio psutil icecream psutil pytest autopep8
-RUN python3 -m pip install --no-cache-dir "learning-loop-node==0.3.2"
+RUN python3 -m pip install --no-cache-dir "learning-loop-node==0.3.5"
 
 WORKDIR /app/
 RUN mkdir -p /data

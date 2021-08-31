@@ -4,6 +4,7 @@ import os
 from glob import glob
 import re
 import subprocess
+import logging
 
 
 def replace_classes_and_filters(classes_count: int, training_folder: str) -> None:
@@ -16,13 +17,13 @@ def replace_classes_and_filters(classes_count: int, training_folder: str) -> Non
         if line.startswith('filters='):
             last_known_filters_line = i
         if line.startswith('[yolo]'):
-            lines[last_known_filters_line] = f'filters={(classes_count+5)*3}'
+            lines[last_known_filters_line] = f'filters={(classes_count+5)*3}\n'
             last_known_filters_line = None
         if line.startswith('classes='):
-            lines[i] = f'classes={classes_count}'
+            lines[i] = f'classes={classes_count}\n'
 
     with open(cfg_file, 'w') as f:
-        f.write('\n'.join(lines))
+        f.writelines(lines)
 
 
 def update_anchors(training_folder: str) -> None:
@@ -32,6 +33,46 @@ def update_anchors(training_folder: str) -> None:
 
     anchors = _calculate_anchors(training_folder, yolo_layer_count, width, height)
     _write_anchors(cfg_file_path, anchors)
+
+
+def update_hyperparameters(
+        training_folder: str,
+        batch: int = 64,
+        subdivisions: int = 8,
+        size: int = 800,
+        learning_rate: int = 0.001,
+        burn_in: int = 400,
+        steps: List[int] = [30000, 50000],
+        max_batches=80000
+) -> None:
+    cfg = _find_cfg_file(training_folder)
+    with open(cfg, 'r') as f:
+        lines = f.readlines()
+
+    for i, line in enumerate(lines):
+        if line.startswith("batch"):
+            lines[i] = f'batch={batch}\n'
+        if line.startswith("subdivisions"):
+            lines[i] = f'subdivisions={subdivisions}\n'
+        if line.startswith("width"):
+            lines[i] = f'width={size}\n'
+        if line.startswith("height"):
+            lines[i] = f'height={size}\n'
+        if line.startswith("learning_rate"):
+            lines[i] = f'learning_rate={learning_rate}\n'
+        if line.startswith("burn_in"):
+            lines[i] = f'burn_in={burn_in}\n'
+        if line.startswith("steps"):
+            lines[i] = f'steps={steps}\n'
+        if line.startswith("max_batches"):
+            lines[i] = f'max_batches={max_batches}\n'
+        if line.startswith("[convolutional]"):
+            break
+
+    logging.info(''.join(lines[:30]))
+
+    with open(cfg, 'w') as f:
+        f.writelines(lines)
 
 
 def _find_cfg_file(folder: str) -> str:
@@ -80,10 +121,8 @@ def _read_width_and_height(cfg_file_path: str):
 def _write_anchors(cfg_file_path: str, anchors: str) -> None:
     with open(cfg_file_path, 'r') as f:
         lines = f.readlines()
-
     for i, line in enumerate(lines):
         if line.startswith("anchors"):
-            line = f'anchors={anchors}\n'
-            lines[i] = line
+            lines[i] = f'anchors={anchors}\n'
     with open(cfg_file_path, 'w') as f:
         f.writelines(lines)

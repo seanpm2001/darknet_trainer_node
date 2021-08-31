@@ -6,7 +6,7 @@ from darknet_trainer import DarknetTrainer
 import uvicorn
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 darknet_trainer = DarknetTrainer(capability=Capability.Box, model_format='yolo')
 node = TrainerNode(uuid='c34dc41f-9b76-4aa9-8b8d-9d27e33a19e4', name='darknet trainer', trainer=darknet_trainer)
