@@ -57,8 +57,11 @@ class DarknetTrainer(Trainer):
     def get_error(self) -> str:
         if self.executor is None:
             return
-        if 'CUDA Error: out of memory' in self.executor.get_log():
-            return 'graphics card is out of memory'
+        try:
+            if 'CUDA Error: out of memory' in self.executor.get_log():
+                return 'graphics card is out of memory'
+        except:
+            return
 
     def get_model_files(self, model_id) -> List[str]:
         from glob import glob

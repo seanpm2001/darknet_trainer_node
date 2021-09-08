@@ -38,12 +38,12 @@ def update_anchors(training_folder: str) -> None:
 def update_hyperparameters(
         training_folder: str,
         batch: int = 64,
-        subdivisions: int = 8,
+        subdivisions: int = 4,
         size: int = 800,
         learning_rate: int = 0.001,
         burn_in: int = 400,
-        steps: List[int] = [30000, 50000],
-        max_batches=80000
+        steps: List[int] = [10000, 30000],
+        max_batches=50000
 ) -> None:
     cfg = _find_cfg_file(training_folder)
     with open(cfg, 'r') as f:
