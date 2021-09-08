@@ -25,11 +25,11 @@ def create_downloader() -> Downloader:
     return DownloaderFactory.create(context=context, capability=Capability.Box)
 
 
-async def downlaod_data(trainer: Trainer):
+async def download_data(trainer: Trainer):
     model_id = await trainer_test_helper.assert_upload_model(
-        ['tests/integration/data/tiny_yolo.cfg', 'tests/integration/data/fake_weightfile.weights'], format='yolo')
+        ['tests/integration/data/training.cfg', 'tests/integration/data/model.weights'], format='yolo')
     context = Context(organization='zauberzeug', project='pytest')
     training = Trainer.generate_training(context, {'id': model_id})
     downloader = create_downloader()
-    training.data = await downloader.download_data(training.images_folder, training.training_folder, model_id)
+    training.data = await downloader.download_data(training.images_folder)
     trainer.training = training

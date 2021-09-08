@@ -1,15 +1,11 @@
 from learning_loop_node.trainer.training import Training
 from learning_loop_node.trainer.training_data import TrainingData
-import shutil
 from log_parser import LogParser
 from typing import List, Union
 import helper
-from uuid import uuid4
-from glob import glob
-from uuid import uuid4
-import helper
 from learning_loop_node.trainer.model import BasicModel
 import logging
+
 
 def check_state(training_id: str, training_data: TrainingData, last_published_iteration) -> Union[BasicModel, None]:
     model = _parse_latest_iteration(training_id, training_data)

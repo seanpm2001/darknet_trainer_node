@@ -29,7 +29,7 @@ def create_project():
 @pytest.mark.asyncio
 async def test_start_stop_training():
     model_id = await trainer_test_helper.assert_upload_model(
-        ['tests/integration/data/tiny_yolo.cfg', 'tests/integration/data/fake_weightfile.weights'],
+        ['tests/integration/data/training.cfg', 'tests/integration/data/model.weights'],
         'yolo'
     )
 
@@ -50,23 +50,23 @@ async def test_start_stop_training():
 @pytest.mark.asyncio
 async def test_get_model_files():
     darknet_trainer = darknet_test_helper.create_darknet_trainer()
-    await darknet_test_helper.downlaod_data(darknet_trainer)
+    await darknet_test_helper.download_data(darknet_trainer)
 
-    shutil.copy('tests/integration/data/fake_weightfile.weights',
-                f'{darknet_trainer.training.training_folder}/some_model_uuid.weights')
+    shutil.copy('tests/integration/data/model.weights',
+                f'{darknet_trainer.training.training_folder}/model.weights')
 
-    files = darknet_trainer.get_model_files('some_model_uuid')
+    files = darknet_trainer.get_model_files()
 
     assert len(files) == 3
-    assert 'some_model_uuid.weights' in files[0]
-    assert 'tiny_yolo.cfg' in files[1]
+    assert 'model.weights' in files[0]
+    assert 'training.cfg' in files[1]
     assert 'names.txt' in files[2]
 
 
 @pytest.mark.asyncio
 async def test_get_new_model():
     darknet_trainer = darknet_test_helper.create_darknet_trainer()
-    await darknet_test_helper.downlaod_data(darknet_trainer)
+    await darknet_test_helper.download_data(darknet_trainer)
 
     path = f'{darknet_trainer.training.training_folder}/backup/'
     os.makedirs(path)
@@ -80,8 +80,8 @@ async def test_get_new_model():
 
     # test: store weightfile for further use.
     with pytest.raises(Exception):
-        files = darknet_trainer.get_model_files('some_model_uuid')
+        files = darknet_trainer.get_model_files()
 
-    darknet_trainer.on_model_published(model, 'some_model_uuid')
-    files = darknet_trainer.get_model_files('some_model_uuid')
+    darknet_trainer.on_model_published(model)
+    files = darknet_trainer.get_model_files()
     assert len(files) == 3

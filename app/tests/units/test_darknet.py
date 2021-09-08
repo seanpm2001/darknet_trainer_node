@@ -12,7 +12,7 @@ from tests import test_helper
 @pytest.mark.asyncio
 async def test_yolo_box_creation():
     darknet_trainer = test_helper.create_darknet_trainer()
-    await test_helper.downlaod_data(darknet_trainer)
+    await test_helper.download_data(darknet_trainer)
     training = darknet_trainer.training
     training_data = training.data
 
@@ -73,7 +73,7 @@ async def test_create_image_links():
     assert len(test_helper.get_files_from_data_folder()) == 0
 
     darknet_trainer = test_helper.create_darknet_trainer()
-    await test_helper.downlaod_data(darknet_trainer)
+    await test_helper.download_data(darknet_trainer)
     training = darknet_trainer.training
     training_data = training.data
     training_id = training.id
@@ -85,18 +85,18 @@ async def test_create_image_links():
     assert files[0] == '../data/zauberzeug/pytest/images/04e9b13d-9f5b-02c5-af46-5bf40b1ca0a7.jpg'
     assert files[1] == '../data/zauberzeug/pytest/images/94d1c90f-9ea5-abda-2696-6ab322d1e243.jpg'
     assert files[2] == '../data/zauberzeug/pytest/images/d99747e9-7c6f-5753-2769-4184f870f18b.jpg'
-    assert files[3] == f'../data/zauberzeug/pytest/trainings/{training_id}/fake_weightfile.weights'
+    assert files[3] == f'../data/zauberzeug/pytest/trainings/{training_id}/model.weights'
     assert files[4] == f'../data/zauberzeug/pytest/trainings/{training_id}/images/04e9b13d-9f5b-02c5-af46-5bf40b1ca0a7.jpg'
     assert files[5] == f'../data/zauberzeug/pytest/trainings/{training_id}/images/94d1c90f-9ea5-abda-2696-6ab322d1e243.jpg'
     assert files[6] == f'../data/zauberzeug/pytest/trainings/{training_id}/images/d99747e9-7c6f-5753-2769-4184f870f18b.jpg'
-    assert files[7] == f'../data/zauberzeug/pytest/trainings/{training_id}/tiny_yolo.cfg'
+    assert files[7] == f'../data/zauberzeug/pytest/trainings/{training_id}/training.cfg'
 
 
 @pytest.mark.asyncio
 async def test_create_train_and_test_file():
     assert len(test_helper.get_files_from_data_folder()) == 0
     darknet_trainer = test_helper.create_darknet_trainer()
-    await test_helper.downlaod_data(darknet_trainer)
+    await test_helper.download_data(darknet_trainer)
     training = darknet_trainer.training
     training_data = training.data
 
@@ -141,7 +141,7 @@ def test_replace_classes_and_filters():
     shutil.rmtree(target_folder, ignore_errors=True)
     os.makedirs(target_folder)
 
-    shutil.copy('tests/integration/data/tiny_yolo.cfg', f'{target_folder}/yolo.cfg')
+    shutil.copy('tests/integration/data/training.cfg', f'{target_folder}/training.cfg')
 
     assert_line_count('filters=45', 0)
     assert_line_count('classes=10', 0)
@@ -157,7 +157,7 @@ async def test_create_anchors():
     assert len(test_helper.get_files_from_data_folder()) == 0
 
     darknet_trainer = test_helper.create_darknet_trainer()
-    await test_helper.downlaod_data(darknet_trainer)
+    await test_helper.download_data(darknet_trainer)
     training = darknet_trainer.training
     training_data = training.data
 
@@ -187,7 +187,7 @@ async def test_create_anchors():
 def test_find_cfg_file(target_cfg_file):
     _, _, training_path = trainer_test_helper.create_needed_folders()
 
-    shutil.copy(f'tests/integration/data/tiny_yolo.cfg', f'{training_path}/{target_cfg_file}')
+    shutil.copy(f'tests/integration/data/training.cfg', f'{training_path}/{target_cfg_file}')
     found_cfg_file = yolo_cfg_helper._find_cfg_file(training_path)
     assert target_cfg_file in found_cfg_file
 
