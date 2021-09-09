@@ -9,6 +9,8 @@ import aiohttp
 from learning_loop_node.node import Node
 from retry import retry
 import numpy as np
+import shutil
+from glob import glob
 
 
 def to_yolo(learning_loop_box, image_width, image_height, categories):
@@ -126,6 +128,8 @@ def parse_yolo_lines(lines: str, iteration: int = None) -> dict:
 
 
 def find_weightfile(training_path: str) -> str:
+    shutil.move(glob(f'{training_path}/*.weights')
+                [0], f'{training_path}/model.weights')
     if not os.path.exists(f'{training_path}/model.weights'):
         raise Exception('Number of present weightfiles must be 1.')
     return f'{training_path}/model.weights'
