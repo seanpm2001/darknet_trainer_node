@@ -1,7 +1,5 @@
 from typing import List
-import helper
 import os
-from glob import glob
 import re
 import subprocess
 import logging
@@ -75,13 +73,10 @@ def update_hyperparameters(
         f.writelines(lines)
 
 
-def _find_cfg_file(folder: str) -> str:
-    cfg_files = [file for file in glob(f'{folder}/**/*', recursive=True) if file.endswith('.cfg')]
-    if len(cfg_files) == 0:
-        raise Exception(f'[-] Error: No cfg file found.')
-    elif len(cfg_files) > 1:
-        raise Exception(f'[-] Error: Found more than one cfg file: {cfg_files}')
-    return cfg_files[0]
+def _find_cfg_file(training_folder: str) -> str:
+    if not os.path.exists(f'{training_folder}/training.cfg'):
+        raise Exception(f'[-] Error: No cfg file named training.cfg found.')
+    return f'{training_folder}/training.cfg'
 
 
 def _calculate_anchors(training_path, yolo_layer_count: int, width: int, height: int):

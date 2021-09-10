@@ -4,12 +4,8 @@ import subprocess
 from typing import List
 import helper
 import os
-from glob import glob
 from log_parser import LogParser
-import aiohttp
-from learning_loop_node.node import Node
 from retry import retry
-import numpy as np
 
 
 def to_yolo(learning_loop_box, image_width, image_height, categories):
@@ -127,11 +123,7 @@ def parse_yolo_lines(lines: str, iteration: int = None) -> dict:
 
 
 def find_weightfile(training_path: str) -> str:
-    weightfiles = glob(f'{training_path}/*.weights', recursive=True)
-    if not weightfiles or len(weightfiles) > 1:
-        raise Exception('Number of present weightfiles must be 1.')
-    weightfile = weightfiles[0].split('/')[-1]
-    if weightfile == 'fake_weightfile.weights':
-        return ""
-    else:
-        return weightfile
+    if not os.path.exists(f'{training_path}/model.weights'):
+        raise Exception(
+            'Number of present weightfiles must be 1 and name must be model.weights.')
+    return f'{training_path}/model.weights'
