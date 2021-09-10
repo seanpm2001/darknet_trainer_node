@@ -63,22 +63,25 @@ class DarknetTrainer(Trainer):
         except:
             return
 
-    def get_model_files(self) -> List[str]:
-        training_path = self.training.training_folder
-        if not os.path.exists(f'{training_path}/model.weights'):
-            raise Exception(f'[-] Error: No weightfile named model.weights found.')
+    def get_model_files(self, model_id) -> List[str]:
+        from glob import glob
+        try:
+            weightfile_path = glob(f'/data/**/trainings/**/{model_id}.weights', recursive=True)[0]
+        except:
+            raise Exception(f'No model found for id: {model_id}.')
 
+        training_path = '/'.join(weightfile_path.split('/')[:-1])
         cfg_file_path = yolo_cfg_helper._find_cfg_file(training_path)
-        return [f'{training_path}/model.weights', f'{cfg_file_path}', f'{training_path}/names.txt']
+        return [weightfile_path, f'{cfg_file_path}', f'{training_path}/names.txt']
 
     def get_new_model(self) -> Optional[BasicModel]:
         return model_updater.check_state(self.training.id, self.training.data, self.latest_published_iteration)
 
-    def on_model_published(self, basic_model: BasicModel) -> None:
+    def on_model_published(self, basic_model: BasicModel, uuid: str) -> None:
         self.latest_published_iteration = basic_model.meta_information['iteration']
         weightfile_path = basic_model.meta_information['weightfile_path']
         path = weightfile_path.rsplit('/', 2)[0]
-        new_filename = path + '/model.weights'
+        new_filename = path + f'/{uuid}.weights'
         shutil.move(weightfile_path, new_filename)
 
     def stop_training(self) -> None:

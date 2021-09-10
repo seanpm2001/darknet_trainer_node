@@ -21,10 +21,10 @@ def downloader() -> Downloader:
 @pytest.mark.asyncio
 async def test_parse_latest_confusion_matrix(downloader: Downloader):
     model_id = await trainer_test_helper.assert_upload_model(
-        ['tests/integration/data/training.cfg', 'tests/integration/data/model.weights'])
+        ['tests/integration/data/tiny_yolo.cfg', 'tests/integration/data/fake_weightfile.weights'])
     context = Context(organization='zauberzeug', project='pytest')
     training = Trainer.generate_training(context, {'id': 'some_uuid'})
-    training.data = await downloader.download_data(training.images_folder)
+    training.data = await downloader.download_data(training.images_folder, training.training_folder, model_id)
 
     shutil.copy('tests/integration/data/last_training.log', f'{training.training_folder}/last_training.log')
 
@@ -52,10 +52,10 @@ async def test_parse_latest_confusion_matrix(downloader: Downloader):
 @pytest.mark.asyncio
 async def test_iteration_needs_weightfile_to_be_valid(filename: str, is_valid_model: bool, downloader: Downloader):
     model_id = await trainer_test_helper.assert_upload_model(
-        ['tests/integration/data/training.cfg', 'tests/integration/data/model.weights'])
+        ['tests/integration/data/tiny_yolo.cfg', 'tests/integration/data/fake_weightfile.weights'])
     context = Context(organization='zauberzeug', project='pytest')
     training = Trainer.generate_training(context, {'id': 'some_uuid'})
-    training.data = await downloader.download_data(training.images_folder)
+    training.data = await downloader.download_data(training.images_folder, training.training_folder, model_id)
     trainer = DarknetTrainer(capability=Capability.Box)
     trainer.training = training
 
