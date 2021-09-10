@@ -128,4 +128,4 @@ def parse_yolo_lines(lines: str, iteration: int = None) -> dict:
 def find_weightfile(training_path: str) -> str:
     if not os.path.exists(f'{training_path}/model.weights'):
         raise Exception('Number of present weightfiles must be 1.')
-    return f'{training_path}/model.weights'
+    return 'model.weights'

@@ -76,7 +76,7 @@ def update_hyperparameters(
 def _find_cfg_file(folder: str) -> str:
     if not os.path.exists(f'{folder}/training.cfg'):
         raise Exception(f'[-] Error: No cfg file named training.cfg found.')
-    return f'{folder}/training.cfg'
+    return 'training.cfg'
 
 
 def _calculate_anchors(training_path, yolo_layer_count: int, width: int, height: int):
