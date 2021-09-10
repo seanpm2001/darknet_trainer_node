@@ -63,7 +63,7 @@ def update_hyperparameters(
         if line.startswith("burn_in"):
             lines[i] = f'burn_in={burn_in}\n'
         if line.startswith("steps"):
-            lines[i] = f'steps={",".join(steps)}\n'
+            lines[i] = f'steps={",".join([str(s) for s in steps])}\n'
         if line.startswith("max_batches"):
             lines[i] = f'max_batches={max_batches}\n'
         if line.startswith("[convolutional]"):
