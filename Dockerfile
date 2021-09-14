@@ -26,7 +26,7 @@ RUN $VSCODE_SERVER --install-extension ms-python.vscode-pylance \
 
 RUN python3 -m pip install --upgrade pip
 RUN python3 -m pip install --no-cache-dir "uvicorn[standard]" numpy async_generator aiofiles retry debugpy pytest-asyncio psutil icecream psutil pytest autopep8
-RUN python3 -m pip install --no-cache-dir "learning-loop-node==0.3.7"
+RUN python3 -m pip install --no-cache-dir "learning-loop-node==0.3.8"
 
 WORKDIR /app/
 RUN mkdir -p /data

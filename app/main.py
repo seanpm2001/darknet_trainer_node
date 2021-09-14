@@ -11,7 +11,6 @@ logging.basicConfig(level=logging.INFO)
 
 darknet_trainer = DarknetTrainer(capability=Capability.Box, model_format='yolo')
 node = TrainerNode(
-    uuid='c34dc41f-9b76-4aa9-8b8d-9d27e33a19e6',
     name='darknet trainer ' + os.uname()[1],
     trainer=darknet_trainer
 )
