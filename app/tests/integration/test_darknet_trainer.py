@@ -70,7 +70,7 @@ async def test_get_new_model():
 
     path = f'{darknet_trainer.training.training_folder}/backup/'
     os.makedirs(path)
-    open(f'{path}/tiny_yolo_best_mAP_0.000000_iteration_1089_avgloss_-nan_.weights', 'a').close()
+    open(f'{path}/tiny_yolo_best_mAP_0.000000_iteration_1088_avgloss_-nan_.weights', 'a').close()
 
     shutil.copy('tests/integration/data/last_training.log',
                 f'{darknet_trainer.training.training_folder}/last_training.log')

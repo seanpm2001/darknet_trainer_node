@@ -8,6 +8,7 @@ import os
 from learning_loop_node.trainer.capability import Capability
 import learning_loop_node.trainer.tests.trainer_test_helper as trainer_test_helper
 from learning_loop_node import node
+from learning_loop_node import node_helper
 
 
 def get_files_from_data_folder():
@@ -21,15 +22,17 @@ def create_darknet_trainer() -> DarknetTrainer:
 
 
 def create_downloader() -> Downloader:
-    context = Context(organization='zauberzeug', project='darknet_trainer_tests')
+    context = Context(organization='zauberzeug', project='pytest')
     return DownloaderFactory.create(context=context, capability=Capability.Box)
 
 
 async def downlaod_data(trainer: Trainer):
     model_id = await trainer_test_helper.assert_upload_model(
-        ['tests/integration/data/tiny_yolo.cfg', 'tests/integration/data/fake_weightfile.weights'], format='yolo')
+        ['tests/integration/data/training.cfg', 'tests/integration/data/fake_weightfile.weights'], format='yolo')
     context = Context(organization='zauberzeug', project='pytest')
     training = Trainer.generate_training(context, {'id': model_id})
     downloader = create_downloader()
-    training.data = await downloader.download_data(training.images_folder, training.training_folder, model_id)
+    training.data = await downloader.download_data(training.images_folder)
+    await node_helper.download_model(training.training_folder, context, model_id, 'yolo')
+
     trainer.training = training
