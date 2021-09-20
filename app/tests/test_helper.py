@@ -9,10 +9,11 @@ from learning_loop_node.trainer.capability import Capability
 import learning_loop_node.trainer.tests.trainer_test_helper as trainer_test_helper
 from learning_loop_node import node
 from learning_loop_node import node_helper
+from learning_loop_node import conftest
 
 
 def get_files_from_data_folder():
-    files = [entry for entry in glob('../data/**/*', recursive=True) if os.path.isfile(entry)]
+    files = [entry for entry in glob(f'{conftest.data_folder_for_tests}/**/*', recursive=True) if os.path.isfile(entry)]
     files.sort()
     return files
 

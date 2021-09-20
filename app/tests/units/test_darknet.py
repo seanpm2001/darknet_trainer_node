@@ -1,3 +1,4 @@
+from learning_loop_node import conftest
 import pytest
 import shutil
 import pytest
@@ -7,6 +8,8 @@ import os
 import learning_loop_node.trainer.tests.trainer_test_helper as trainer_test_helper
 import helper
 from tests import test_helper
+from learning_loop_node.conftest import data_folder
+from learning_loop_node.conftest import create_project
 
 
 @pytest.mark.asyncio
@@ -31,15 +34,15 @@ async def test_yolo_box_creation():
 1 0.100000 0.894583 0.050000 0.057500'''
 
 
-def test_create_names_file():
+def test_create_names_file(data_folder):
     assert len(test_helper.get_files_from_data_folder()) == 0
-    _, _, training_folder = trainer_test_helper.create_needed_folders()
+    _, _, training_folder = trainer_test_helper.create_needed_folders(data_folder)
 
     yolo_helper.create_names_file(training_folder, ['category_1', 'category_2'])
     files = test_helper.get_files_from_data_folder()
     assert len(files) == 1
-    names_file = files[0]
-    assert names_file.endswith('names.txt')
+    assert files[0].endswith('names.txt')
+
     with open(f'{training_folder}/names.txt', 'r') as f:
         names = f.readlines()
 
@@ -48,9 +51,9 @@ def test_create_names_file():
     assert names[1] == 'category_2'
 
 
-def test_create_data_file():
+def test_create_data_file(data_folder):
     assert len(test_helper.get_files_from_data_folder()) == 0
-    _, _, training_folder = trainer_test_helper.create_needed_folders()
+    _, _, training_folder = trainer_test_helper.create_needed_folders(data_folder)
 
     yolo_helper.create_data_file(training_folder, 1)
     files = test_helper.get_files_from_data_folder()
@@ -153,7 +156,7 @@ def test_replace_classes_and_filters():
 
 
 @pytest.mark.asyncio
-async def test_create_anchors():
+async def test_create_anchors(create_project):
     assert len(test_helper.get_files_from_data_folder()) == 0
 
     darknet_trainer = test_helper.create_darknet_trainer()
@@ -162,7 +165,7 @@ async def test_create_anchors():
     training_data = training.data
 
     image_folder_for_training = yolo_helper.create_image_links(
-        training.  training_folder, training.images_folder, training_data.image_ids())
+        training.training_folder, training.images_folder, training_data.image_ids())
     await yolo_helper.update_yolo_boxes(image_folder_for_training, training_data)
     box_category_names = helper.get_box_category_names(training_data)
     yolo_helper.create_names_file(training.training_folder, box_category_names)
@@ -172,7 +175,7 @@ async def test_create_anchors():
     yolo_cfg_helper.update_anchors(training.training_folder)
 
     anchor_line = 'anchors = 10,14,  23,27,  37,58,  81,82,  135,169,  344,319'
-    original_cfg_file_path = yolo_cfg_helper._find_cfg_file('darknet_tests/test_data')
+    original_cfg_file_path = yolo_cfg_helper._find_cfg_file(training.training_folder)
     _assert_anchors(original_cfg_file_path, anchor_line)
 
     new_anchors = 'anchors=1.6000,1.8400,1.6000,1.8400,1.6000,1.8400,1.6000,1.8400,1.6000,1.8400,1.6000,1.8400'
@@ -180,16 +183,12 @@ async def test_create_anchors():
     _assert_anchors(cfg_file_path, new_anchors)
 
 
-@pytest.mark.parametrize("target_cfg_file", [
-    ('some_file.cfg'),
-    ('different_name.cfg'),
-])
-def test_find_cfg_file(target_cfg_file):
-    _, _, training_path = trainer_test_helper.create_needed_folders()
+def test_find_cfg_file(data_folder):
+    _, _, training_path = trainer_test_helper.create_needed_folders(data_folder)
 
-    shutil.copy(f'tests/integration/data/tiny_yolo.cfg', f'{training_path}/{target_cfg_file}')
+    shutil.copy(f'tests/integration/data/training.cfg', f'{training_path}/training.cfg')
     found_cfg_file = yolo_cfg_helper._find_cfg_file(training_path)
-    assert target_cfg_file in found_cfg_file
+    assert 'training.cfg' in found_cfg_file
 
 
 def _assert_anchors(cfg_file_path: str, anchor_line: str) -> None:

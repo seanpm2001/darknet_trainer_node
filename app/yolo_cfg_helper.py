@@ -75,7 +75,7 @@ def update_hyperparameters(
 
 def _find_cfg_file(training_folder: str) -> str:
     if not os.path.exists(f'{training_folder}/training.cfg'):
-        raise Exception(f'[-] Error: No cfg file named training.cfg found.')
+        raise Exception(f"[-] Error: No cfg file named training.cfg found in training folder '{training_folder}'")
     return f'{training_folder}/training.cfg'
 
 
