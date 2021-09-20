@@ -67,12 +67,14 @@ class DarknetTrainer(Trainer):
         from glob import glob
         try:
             weightfile_path = glob(f'/data/**/trainings/**/{model_id}.weights', recursive=True)[0]
+            model_dot_weights_path = weightfile_path.replace(f'{model_id}.weights', f'{model_id}/model.weights')
+            os.makedirs(model_dot_weights_path, exist_ok=True)
+            shutil.copy(weightfile_path, model_dot_weights_path)
         except:
             raise Exception(f'No model found for id: {model_id}.')
-
-        training_path = '/'.join(weightfile_path.split('/')[:-1])
+        training_path = '/'.join(weightfile_path.split('/')[:-1])  # hier
         cfg_file_path = yolo_cfg_helper._find_cfg_file(training_path)
-        return [weightfile_path, f'{cfg_file_path}', f'{training_path}/names.txt']
+        return [model_dot_weights_path, f'{cfg_file_path}', f'{training_path}/names.txt']
 
     def get_new_model(self) -> Optional[BasicModel]:
         return model_updater.check_state(self.training.id, self.training.data, self.latest_published_iteration)

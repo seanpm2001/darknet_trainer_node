@@ -7,6 +7,7 @@ import tests.test_helper as darknet_test_helper
 import shutil
 import os
 import asyncio
+from icecream import ic
 
 
 @pytest.fixture()
@@ -85,3 +86,5 @@ async def test_get_new_model():
     darknet_trainer.on_model_published(model, 'some_model_uuid')
     files = darknet_trainer.get_model_files('some_model_uuid')
     assert len(files) == 3
+    model_dot_weights_files = [path for path in files if 'model.weights' in path]
+    assert len(model_dot_weights_files), "There must be a file named model.weights"
