@@ -2,7 +2,6 @@ import pytest
 from typing import Generator
 from learning_loop_node.tests import test_helper
 import shutil
-import yolo_helper
 
 
 @pytest.fixture()
@@ -13,11 +12,7 @@ def web() -> Generator:
 
 @pytest.fixture(autouse=True, scope='function')
 def cleanup():
-
     shutil.rmtree('/data', ignore_errors=True)
-    yolo_helper.kill_all_darknet_processes()
-    yield
-    yolo_helper.kill_all_darknet_processes()
 
 
 @pytest.fixture(autouse=True, scope='module')

@@ -45,7 +45,7 @@ async def update_yolo_boxes(image_folder_for_training: str, training_data: Train
         yolo_boxes = []
         for box in image['box_annotations']:
             #size = 20
-            #box['x'], box['y'] = (np.average([box['x'], box['x'] + box['width']])-size/2,
+            # box['x'], box['y'] = (np.average([box['x'], box['x'] + box['width']])-size/2,
             #                      np.average([box['y'], box['y'] + box['height']])-size/2)
             #box['width'] = size
             #box['height'] = size
@@ -88,23 +88,6 @@ def create_backup_dir(training_folder: str):
     backup_path = f'{training_folder}/backup'
     os.makedirs(backup_path, exist_ok=True)
 
-
-def kill_all_darknet_processes() -> bool:
-    @retry(AssertionError, tries=5, delay=0.1)
-    def assert_no_darknet_running():
-        assert _is_any_darknet_running() == False
-        return True
-
-    p = subprocess.Popen('pkill -f darknet', shell=True)
-    p.communicate()
-    assert assert_no_darknet_running(), 'No training should run.'
-    return True
-
-
-def _is_any_darknet_running() -> bool:
-    p = subprocess.Popen('pgrep darknet', shell=True)
-    p.communicate()
-    return p.returncode == 0
 
 
 def parse_yolo_lines(lines: str, iteration: int = None) -> dict:
