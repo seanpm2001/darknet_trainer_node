@@ -52,16 +52,16 @@ async def test_start_stop_training():
 async def test_get_model_files():
     darknet_trainer = darknet_test_helper.create_darknet_trainer()
     await darknet_test_helper.downlaod_data(darknet_trainer)
-
     shutil.copy('tests/integration/data/fake_weightfile.weights',
                 f'{darknet_trainer.training.training_folder}/some_model_uuid.weights')
-
     files = darknet_trainer.get_model_files('some_model_uuid')
 
     assert len(files) == 3
-    assert 'some_model_uuid.weights' in files[0]
-    assert 'tiny_yolo.cfg' in files[1]
-    assert 'names.txt' in files[2]
+    assert files[0].endswith('/model.weights')
+    assert files[1].endswith('/training.cfg')
+    assert files[2].endswith('/names.txt')
+    for f in files:
+        assert os.path.exists(f)
 
 
 @pytest.mark.asyncio
