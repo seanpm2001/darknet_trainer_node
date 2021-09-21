@@ -29,7 +29,9 @@ def create_downloader() -> Downloader:
 
 async def downlaod_data(trainer: Trainer):
     model_id = await trainer_test_helper.assert_upload_model(
-        ['tests/integration/data/training.cfg', 'tests/integration/data/fake_weightfile.weights'], format='yolo')
+        ['tests/integration/data/' + f for f in ['fake_weightfile.weights', 'training.cfg', 'names.txt']],
+        format='yolo'
+    )
     context = Context(organization='zauberzeug', project='pytest')
     training = Trainer.generate_training(context, {'id': model_id})
     downloader = create_downloader()
