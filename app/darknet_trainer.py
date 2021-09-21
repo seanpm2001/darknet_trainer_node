@@ -67,8 +67,9 @@ class DarknetTrainer(Trainer):
         from glob import glob
         try:
             weightfile_path = glob(f'/data/**/trainings/**/{model_id}.weights', recursive=True)[0]
-            model_dot_weights_path = weightfile_path.replace(f'{model_id}.weights', f'{model_id}/model.weights')
-            os.makedirs(model_dot_weights_path, exist_ok=True)
+            os.makedirs(f'/tmp/{model_id}', exist_ok=True)
+            os.makedirs(weightfile_path.replace('.weights', ''), exist_ok=True)
+            model_dot_weights_path = f'/tmp/{model_id}/model.weights'
             shutil.copy(weightfile_path, model_dot_weights_path)
         except:
             raise Exception(f'No model found for id: {model_id}.')

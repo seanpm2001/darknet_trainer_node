@@ -87,4 +87,5 @@ async def test_get_new_model():
     files = darknet_trainer.get_model_files('some_model_uuid')
     assert len(files) == 3
     model_dot_weights_files = [path for path in files if 'model.weights' in path]
-    assert len(model_dot_weights_files), "There must be a file named model.weights"
+    assert len(model_dot_weights_files) == 1, "There must be a file named model.weights"
+    assert os.path.isfile(model_dot_weights_files[0])
