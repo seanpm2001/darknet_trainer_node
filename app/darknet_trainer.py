@@ -2,7 +2,7 @@ import shutil
 from typing import Any, List, Optional, Union
 from learning_loop_node.trainer.model import BasicModel
 from learning_loop_node.trainer.trainer import Trainer
-from learning_loop_node.trainer.training_data import TrainingData
+from learning_loop_node.globals import GLOBALS
 import yolo_helper
 import helper
 import yolo_cfg_helper
@@ -63,7 +63,7 @@ class DarknetTrainer(Trainer):
     def get_model_files(self, model_id) -> List[str]:
         from glob import glob
         try:
-            weightfile_path = glob(f'/data/**/trainings/**/{model_id}.weights', recursive=True)[0]
+            weightfile_path = glob(f'{GLOBALS.data_folder}/**/trainings/**/{model_id}.weights', recursive=True)[0]
             os.makedirs(f'/tmp/{model_id}', exist_ok=True)
             os.makedirs(weightfile_path.replace('.weights', ''), exist_ok=True)
             model_dot_weights_path = f'/tmp/{model_id}/model.weights'

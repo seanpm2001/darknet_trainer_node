@@ -1,19 +1,12 @@
 import pytest
 from typing import Generator
 from learning_loop_node.tests import test_helper
-import shutil
-from learning_loop_node import conftest
 
 
 @pytest.fixture()
 def web() -> Generator:
     with test_helper.LiveServerSession() as c:
         yield c
-
-
-@pytest.fixture(autouse=True, scope='function')
-def cleanup():
-    shutil.rmtree(conftest.data_folder_for_tests, ignore_errors=True)
 
 
 @pytest.fixture(autouse=True, scope='module')

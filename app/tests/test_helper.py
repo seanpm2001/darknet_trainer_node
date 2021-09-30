@@ -6,13 +6,13 @@ from darknet_trainer import DarknetTrainer
 from glob import glob
 import os
 import learning_loop_node.trainer.tests.trainer_test_helper as trainer_test_helper
-from learning_loop_node import node
 from learning_loop_node import node_helper
-from learning_loop_node import conftest
+
+from learning_loop_node.globals import GLOBALS
 
 
 def get_files_from_data_folder():
-    files = [entry for entry in glob(f'{conftest.data_folder_for_tests}/**/*', recursive=True) if os.path.isfile(entry)]
+    files = [entry for entry in glob(f'{GLOBALS.data_folder}/**/*', recursive=True) if os.path.isfile(entry)]
     files.sort()
     return files
 

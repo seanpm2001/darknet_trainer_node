@@ -1,7 +1,7 @@
 import pytest
 import shutil
 import pytest
-from node import conftest
+from learning_loop_node.globals import GLOBALS
 import yolo_helper
 import yolo_cfg_helper
 import os
@@ -84,14 +84,14 @@ async def test_create_image_links():
 
     files = test_helper.get_files_from_data_folder()
     assert len(files) == 8
-    assert files[0] == '../data/zauberzeug/pytest/images/04e9b13d-9f5b-02c5-af46-5bf40b1ca0a7.jpg'
-    assert files[1] == '../data/zauberzeug/pytest/images/94d1c90f-9ea5-abda-2696-6ab322d1e243.jpg'
-    assert files[2] == '../data/zauberzeug/pytest/images/d99747e9-7c6f-5753-2769-4184f870f18b.jpg'
-    assert files[3] == f'../data/zauberzeug/pytest/trainings/{training_id}/model.weights'
-    assert files[4] == f'../data/zauberzeug/pytest/trainings/{training_id}/images/04e9b13d-9f5b-02c5-af46-5bf40b1ca0a7.jpg'
-    assert files[5] == f'../data/zauberzeug/pytest/trainings/{training_id}/images/94d1c90f-9ea5-abda-2696-6ab322d1e243.jpg'
-    assert files[6] == f'../data/zauberzeug/pytest/trainings/{training_id}/images/d99747e9-7c6f-5753-2769-4184f870f18b.jpg'
-    assert files[7] == f'../data/zauberzeug/pytest/trainings/{training_id}/training.cfg'
+    assert files[0] == f'{GLOBALS.data_folder}/zauberzeug/pytest/images/04e9b13d-9f5b-02c5-af46-5bf40b1ca0a7.jpg'
+    assert files[1] == f'{GLOBALS.data_folder}/zauberzeug/pytest/images/94d1c90f-9ea5-abda-2696-6ab322d1e243.jpg'
+    assert files[2] == f'{GLOBALS.data_folder}/zauberzeug/pytest/images/d99747e9-7c6f-5753-2769-4184f870f18b.jpg'
+    assert files[3] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/model.weights'
+    assert files[4] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/images/04e9b13d-9f5b-02c5-af46-5bf40b1ca0a7.jpg'
+    assert files[5] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/images/94d1c90f-9ea5-abda-2696-6ab322d1e243.jpg'
+    assert files[6] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/images/d99747e9-7c6f-5753-2769-4184f870f18b.jpg'
+    assert files[7] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/training.cfg'
 
 
 @pytest.mark.asyncio
@@ -182,8 +182,8 @@ async def test_create_anchors(create_project):
     _assert_anchors(cfg_file_path, new_anchors)
 
 
-def test_find_cfg_file(data_folder):
-    _, _, training_path = trainer_test_helper.create_needed_folders(data_folder)
+def test_find_cfg_file():
+    _, _, training_path = trainer_test_helper.create_needed_folders(GLOBALS.data_folder)
 
     shutil.copy(f'tests/integration/data/training.cfg', f'{training_path}/training.cfg')
     found_cfg_file = yolo_cfg_helper._find_cfg_file(training_path)
