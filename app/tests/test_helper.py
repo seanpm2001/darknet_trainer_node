@@ -5,7 +5,6 @@ from learning_loop_node.trainer.trainer import Trainer
 from darknet_trainer import DarknetTrainer
 from glob import glob
 import os
-from learning_loop_node.trainer.capability import Capability
 import learning_loop_node.trainer.tests.trainer_test_helper as trainer_test_helper
 from learning_loop_node import node
 from learning_loop_node import node_helper
@@ -19,12 +18,12 @@ def get_files_from_data_folder():
 
 
 def create_darknet_trainer() -> DarknetTrainer:
-    return DarknetTrainer(model_format='yolo', capability=Capability.Box)
+    return DarknetTrainer(model_format='yolo')
 
 
 def create_downloader() -> Downloader:
     context = Context(organization='zauberzeug', project='pytest')
-    return DownloaderFactory.create(context=context, capability=Capability.Box)
+    return DownloaderFactory.create(context=context)
 
 
 async def downlaod_data(trainer: Trainer):

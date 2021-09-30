@@ -1,24 +1,19 @@
 import shutil
-import traceback
 from typing import Any, List, Optional, Union
-from learning_loop_node.trainer.capability import Capability
-from learning_loop_node.trainer.model import BasicModel, Model
+from learning_loop_node.trainer.model import BasicModel
 from learning_loop_node.trainer.trainer import Trainer
-from learning_loop_node.trainer.executor import Executor
 import yolo_helper
 import helper
 import yolo_cfg_helper
-import subprocess
 import os
-import psutil
 import model_updater
 import logging
 
 
 class DarknetTrainer(Trainer):
 
-    def __init__(self, capability: Capability, model_format: str) -> None:
-        super().__init__(capability, model_format)
+    def __init__(self, model_format: str) -> None:
+        super().__init__(model_format)
         self.latest_published_iteration: Union[int, None] = None
 
     async def start_training(self) -> None:

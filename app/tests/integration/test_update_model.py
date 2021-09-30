@@ -1,6 +1,3 @@
-from learning_loop_node.trainer.capability import Capability
-from learning_loop_node.node import Node
-from learning_loop_node.trainer.downloader_factory import DownloaderFactory
 from learning_loop_node.trainer.downloader import DataDownloader as Downloader
 from learning_loop_node.context import Context
 from learning_loop_node.trainer.trainer import Trainer
@@ -56,7 +53,7 @@ async def test_iteration_needs_weightfile_to_be_valid(filename: str, is_valid_mo
     context = Context(organization='zauberzeug', project='pytest')
     training = Trainer.generate_training(context, {'id': 'some_uuid'})
     training.data = await downloader.download_data(training.images_folder, training.training_folder, model_id)
-    trainer = DarknetTrainer(capability=Capability.Box)
+    trainer = DarknetTrainer()
     trainer.training = training
 
     shutil.copy(f'tests/integration/data/{filename}', f'{training.training_folder}/last_training.log')

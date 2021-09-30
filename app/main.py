@@ -1,7 +1,6 @@
 import asyncio
 from threading import Thread
 from learning_loop_node import TrainerNode
-from learning_loop_node import Capability
 from darknet_trainer import DarknetTrainer
 import uvicorn
 import logging
@@ -9,7 +8,7 @@ import os
 
 logging.basicConfig(level=logging.INFO)
 
-darknet_trainer = DarknetTrainer(capability=Capability.Box, model_format='yolo')
+darknet_trainer = DarknetTrainer(model_format='yolo')
 node = TrainerNode(
     name='darknet trainer ' + os.uname()[1],
     trainer=darknet_trainer
