@@ -2,6 +2,7 @@ import shutil
 from typing import Any, List, Optional, Union
 from learning_loop_node.trainer.model import BasicModel
 from learning_loop_node.trainer.trainer import Trainer
+from learning_loop_node.trainer.training_data import TrainingData
 import yolo_helper
 import helper
 import yolo_cfg_helper
@@ -28,6 +29,7 @@ class DarknetTrainer(Trainer):
         training_folder = self.training.training_folder
         image_folder = self.training.images_folder
         training_data = self.training.data
+        helper.remove_not_supported_category_types(self.training.data)
         yolo_helper.create_backup_dir(training_folder)
         with open(training_folder + '/training.cfg', 'r') as f:
             logging.info('before anything')

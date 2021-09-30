@@ -1,6 +1,5 @@
 import aiofiles
 from learning_loop_node.trainer.training_data import TrainingData
-import subprocess
 from typing import List
 import helper
 import os
@@ -87,7 +86,6 @@ def create_train_and_test_file(training_folder: str, image_folder_for_training: 
 def create_backup_dir(training_folder: str):
     backup_path = f'{training_folder}/backup'
     os.makedirs(backup_path, exist_ok=True)
-
 
 
 def parse_yolo_lines(lines: str, iteration: int = None) -> dict:

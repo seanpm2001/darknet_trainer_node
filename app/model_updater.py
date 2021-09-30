@@ -11,6 +11,7 @@ import helper
 from learning_loop_node.trainer.model import BasicModel
 import logging
 
+
 def check_state(training_id: str, training_data: TrainingData, last_published_iteration) -> Union[BasicModel, None]:
     model = _parse_latest_iteration(training_id, training_data)
     if model:
@@ -51,7 +52,7 @@ def _parse_latest_iteration(training_id: str, training_data: TrainingData) -> Un
     confusion_matrices = {}
     for parsed_class in parser.parse_classes():
         name = parsed_class['name']
-        id = _get_id_of_category_from_name(name, training_data.box_categories)
+        id = _get_id_of_category_from_name(name, training_data.categories)
         del parsed_class['id']
         del parsed_class['name']
         confusion_matrices[id] = parsed_class
