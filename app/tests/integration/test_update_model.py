@@ -18,19 +18,19 @@ def downloader() -> Downloader:
 @pytest.mark.asyncio
 async def test_parse_latest_confusion_matrix(downloader: Downloader):
     model_id = await trainer_test_helper.assert_upload_model(
-        ['tests/integration/data/tiny_yolo.cfg', 'tests/integration/data/fake_weightfile.weights'])
+        ['tests/integration/data/training.cfg', 'tests/integration/data/model.weights'])
     context = Context(organization='zauberzeug', project='pytest')
     training = Trainer.generate_training(context, {'id': 'some_uuid'})
-    training.data = await downloader.download_data(training.images_folder, training.training_folder, model_id)
+    training.data = await downloader.download_data(training.images_folder)
 
     shutil.copy('tests/integration/data/last_training.log', f'{training.training_folder}/last_training.log')
 
     new_model = model_updater._parse_latest_iteration(training.id, training.data)
     assert new_model
-    assert new_model['iteration'] == 1089
+    assert new_model['iteration'] == 1088
     confusion_matrix = new_model['confusion_matrix']
     assert len(confusion_matrix) == 2
-    purple_matrix = confusion_matrix[training.data.box_categories[0]['id']]
+    purple_matrix = confusion_matrix[training.data.categories[0]['id']]
 
     assert purple_matrix['ap'] == 42
     assert purple_matrix['tp'] == 1
@@ -38,7 +38,7 @@ async def test_parse_latest_confusion_matrix(downloader: Downloader):
     assert purple_matrix['fn'] == 3
 
     weightfile = new_model['weightfile']
-    assert weightfile == 'backup/tiny_yolo_best_mAP_0.000000_iteration_1089_avgloss_-nan_.weights'
+    assert weightfile == 'backup/tiny_yolo_best_mAP_0.000000_iteration_1088_avgloss_-nan_.weights'
 
 
 @pytest.mark.parametrize("filename,is_valid_model", [
@@ -49,7 +49,7 @@ async def test_parse_latest_confusion_matrix(downloader: Downloader):
 @pytest.mark.asyncio
 async def test_iteration_needs_weightfile_to_be_valid(filename: str, is_valid_model: bool, downloader: Downloader):
     model_id = await trainer_test_helper.assert_upload_model(
-        ['tests/integration/data/tiny_yolo.cfg', 'tests/integration/data/fake_weightfile.weights'])
+        ['tests/integration/data/training.cfg', 'tests/integration/data/model.weights'])
     context = Context(organization='zauberzeug', project='pytest')
     training = Trainer.generate_training(context, {'id': 'some_uuid'})
     training.data = await downloader.download_data(training.images_folder, training.training_folder, model_id)

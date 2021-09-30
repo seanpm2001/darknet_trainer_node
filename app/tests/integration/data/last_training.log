@@ -31,8 +31,8 @@ Resizing to initial size: 32 x 32  try to allocate additional workspace_size = 0
  Detection layer: 16 - type = 28
  Detection layer: 23 - type = 28
  detections_count = 0, unique_truth_count = 3
-class_id = 0, name = purple, ap = 0.00%      (TP = 0, FP = 0, FN = 1)
-class_id = 1, name = green, ap = 0.00%       (TP = 0, FP = 0, FN = 2)
+class_id = 0, name = purple, ap = 42.00%      (TP = 1, FP = 2, FN = 3)
+class_id = 1, name = green, ap = 43.00%       (TP = 4, FP = 5, FN = 6)
  for conf_thresh = 0.25, precision = -nan, recall = 0.00, F1-score = -nan
  for conf_thresh = 0.25, TP = 0, FP = 0, FN = 3, average IoU = 0.00 %
  IoU threshold = 50 %, used Area-Under-Curve for each unique Recall
@@ -56,8 +56,8 @@ Resizing to initial size: 32 x 32  try to allocate additional workspace_size = 0
  Detection layer: 16 - type = 28
  Detection layer: 23 - type = 28
  detections_count = 0, unique_truth_count = 3
-class_id = 0, name = purple, ap = 42.00%      (TP = 1, FP = 2, FN = 3)
-class_id = 1, name = green, ap = 43.00%       (TP = 4, FP = 5, FN = 6)
+class_id = 0, name = purple, ap = 42.00%      (TP = 2, FP = 3, FN = 4)
+class_id = 1, name = green, ap = 43.00%       (TP = 5, FP = 6, FN = 7)
  for conf_thresh = 0.25, precision = -nan, recall = 0.00, F1-score = -nan
  for conf_thresh = 0.25, TP = 0, FP = 0, FN = 3, average IoU = 0.00 %
  IoU threshold = 50 %, used Area-Under-Curve for each unique Recall

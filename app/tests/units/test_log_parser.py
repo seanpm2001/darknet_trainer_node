@@ -1,5 +1,4 @@
 from log_parser import LogParser
-from uuid import uuid4
 
 data = """
 
@@ -39,6 +38,7 @@ Set -points flag:
  `-points 0` (AUC) for ImageNet, PascalVOC 2010-2012, your custom dataset
 
  mean_average_precision (mAP@0.5) = 0.000000
+ New best mAP!
 Loaded: 0.061675 seconds
  (next mAP calculation at 1001 iterations)
 
@@ -89,6 +89,7 @@ def test_parsing_empty_log():
     assert mAP == None
     parsed_class = p.parse_classes()
     assert parsed_class == []
+
 
 def test_parse_mAP():
     mAP = parser.parse_mAP()

@@ -1,19 +1,18 @@
-from learning_loop_node import conftest
 import pytest
 import shutil
 import pytest
+from node import conftest
 import yolo_helper
 import yolo_cfg_helper
 import os
 import learning_loop_node.trainer.tests.trainer_test_helper as trainer_test_helper
 import helper
 from tests import test_helper
-from learning_loop_node.conftest import data_folder
 from learning_loop_node.conftest import create_project
 
 
 @pytest.mark.asyncio
-async def test_yolo_box_creation():
+async def test_yolo_box_creation(create_project):
     darknet_trainer = test_helper.create_darknet_trainer()
     await test_helper.downlaod_data(darknet_trainer)
     training = darknet_trainer.training
@@ -88,11 +87,11 @@ async def test_create_image_links():
     assert files[0] == '../data/zauberzeug/pytest/images/04e9b13d-9f5b-02c5-af46-5bf40b1ca0a7.jpg'
     assert files[1] == '../data/zauberzeug/pytest/images/94d1c90f-9ea5-abda-2696-6ab322d1e243.jpg'
     assert files[2] == '../data/zauberzeug/pytest/images/d99747e9-7c6f-5753-2769-4184f870f18b.jpg'
-    assert files[3] == f'../data/zauberzeug/pytest/trainings/{training_id}/fake_weightfile.weights'
+    assert files[3] == f'../data/zauberzeug/pytest/trainings/{training_id}/model.weights'
     assert files[4] == f'../data/zauberzeug/pytest/trainings/{training_id}/images/04e9b13d-9f5b-02c5-af46-5bf40b1ca0a7.jpg'
     assert files[5] == f'../data/zauberzeug/pytest/trainings/{training_id}/images/94d1c90f-9ea5-abda-2696-6ab322d1e243.jpg'
     assert files[6] == f'../data/zauberzeug/pytest/trainings/{training_id}/images/d99747e9-7c6f-5753-2769-4184f870f18b.jpg'
-    assert files[7] == f'../data/zauberzeug/pytest/trainings/{training_id}/tiny_yolo.cfg'
+    assert files[7] == f'../data/zauberzeug/pytest/trainings/{training_id}/training.cfg'
 
 
 @pytest.mark.asyncio
@@ -144,7 +143,7 @@ def test_replace_classes_and_filters():
     shutil.rmtree(target_folder, ignore_errors=True)
     os.makedirs(target_folder)
 
-    shutil.copy('tests/integration/data/tiny_yolo.cfg', f'{target_folder}/yolo.cfg')
+    shutil.copy('tests/integration/data/training.cfg', f'{target_folder}/training.cfg')
 
     assert_line_count('filters=45', 0)
     assert_line_count('classes=10', 0)

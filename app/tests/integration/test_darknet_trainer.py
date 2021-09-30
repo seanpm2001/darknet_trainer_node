@@ -30,7 +30,7 @@ def create_project():
 @pytest.mark.asyncio
 async def test_start_stop_training():
     model_id = await trainer_test_helper.assert_upload_model(
-        ['tests/integration/data/tiny_yolo.cfg', 'tests/integration/data/fake_weightfile.weights'],
+        ['tests/integration/data/training.cfg', 'tests/integration/data/model.weights'],
         'yolo'
     )
 
@@ -52,7 +52,7 @@ async def test_start_stop_training():
 async def test_get_model_files():
     darknet_trainer = darknet_test_helper.create_darknet_trainer()
     await darknet_test_helper.downlaod_data(darknet_trainer)
-    shutil.copy('tests/integration/data/fake_weightfile.weights',
+    shutil.copy('tests/integration/data/model.weights',
                 f'{darknet_trainer.training.training_folder}/some_model_uuid.weights')
     files = darknet_trainer.get_model_files('some_model_uuid')
 
