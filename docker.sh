@@ -52,7 +52,7 @@ case $cmd in
         nvidia-docker run $args $image /app/start.sh debug
         ;;
     r | run)
-        nvidia-docker run $args $image
+        nvidia-docker run $args $cmd_args $image
         ;;
     s | stop)
         docker stop $name $cmd_args
