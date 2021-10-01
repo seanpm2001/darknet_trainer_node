@@ -49,7 +49,7 @@ async def test_start_stop_training():
 
 
 @pytest.mark.asyncio
-async def test_get_model_files():
+async def test_get_model_files(create_project):
     darknet_trainer = darknet_test_helper.create_darknet_trainer()
     await darknet_test_helper.downlaod_data(darknet_trainer)
     shutil.copy('tests/integration/data/model.weights',
@@ -65,7 +65,7 @@ async def test_get_model_files():
 
 
 @pytest.mark.asyncio
-async def test_get_new_model():
+async def test_get_new_model(create_project):
     darknet_trainer = darknet_test_helper.create_darknet_trainer()
     await darknet_test_helper.downlaod_data(darknet_trainer)
 

@@ -22,15 +22,21 @@ async def test_yolo_box_creation(create_project):
         training. training_folder, training.images_folder, training_data.image_ids())
 
     await yolo_helper.update_yolo_boxes(image_folder_for_training,  training_data)
-    assert len(test_helper.get_files_from_data_folder()) == 11  # 3 images, 3 image_links, 3 txt files, .cfg, .weights
+
+    # 3 images, 3 image_links, 3 txt files, names.txt training.cfg, model.weights
+    assert len(test_helper.get_files_from_data_folder()) == 12
 
     first_image_id = training_data.image_ids()[0]
     with open(f'{image_folder_for_training}/{first_image_id}.txt', 'r') as f:
         yolo_content = f.read()
 
-    assert yolo_content == '''0 0.525000 0.836250 0.050000 0.057500
-1 0.725000 0.490417 0.050000 0.057500
-1 0.100000 0.894583 0.050000 0.057500'''
+    assert yolo_content == '''0 0.725000 0.721250 0.050000 0.057500
+1 0.075000 0.201250 0.050000 0.057500
+1 0.350000 0.317083 0.050000 0.057500'''
+
+#     assert yolo_content == '''0 0.525000 0.836250 0.050000 0.057500
+# 1 0.725000 0.490417 0.050000 0.057500
+# 1 0.100000 0.894583 0.050000 0.057500'''
 
 
 def test_create_names_file(data_folder):
@@ -71,7 +77,7 @@ def test_create_data_file(data_folder):
 
 
 @pytest.mark.asyncio
-async def test_create_image_links():
+async def test_create_image_links(create_project):
     assert len(test_helper.get_files_from_data_folder()) == 0
 
     darknet_trainer = test_helper.create_darknet_trainer()
@@ -82,20 +88,21 @@ async def test_create_image_links():
 
     yolo_helper.create_image_links(training.training_folder, training.images_folder, training_data.image_ids())
 
-    files = test_helper.get_files_from_data_folder()
-    assert len(files) == 8
-    assert files[0] == f'{GLOBALS.data_folder}/zauberzeug/pytest/images/04e9b13d-9f5b-02c5-af46-5bf40b1ca0a7.jpg'
-    assert files[1] == f'{GLOBALS.data_folder}/zauberzeug/pytest/images/94d1c90f-9ea5-abda-2696-6ab322d1e243.jpg'
-    assert files[2] == f'{GLOBALS.data_folder}/zauberzeug/pytest/images/d99747e9-7c6f-5753-2769-4184f870f18b.jpg'
-    assert files[3] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/model.weights'
-    assert files[4] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/images/04e9b13d-9f5b-02c5-af46-5bf40b1ca0a7.jpg'
-    assert files[5] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/images/94d1c90f-9ea5-abda-2696-6ab322d1e243.jpg'
-    assert files[6] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/images/d99747e9-7c6f-5753-2769-4184f870f18b.jpg'
-    assert files[7] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/training.cfg'
+    files = sorted(test_helper.get_files_from_data_folder())
+    assert len(files) == 9
+    assert files[0] == f'{GLOBALS.data_folder}/zauberzeug/pytest/images/285a92db-bc64-240d-50c2-3212d3973566.jpg'
+    assert files[1] == f'{GLOBALS.data_folder}/zauberzeug/pytest/images/6a4ddab1-93b4-b2e2-30c5-16b58f46d0d0.jpg'
+    assert files[2] == f'{GLOBALS.data_folder}/zauberzeug/pytest/images/a120df7c-51ec-b22e-d012-c9ee745fcc8e.jpg'
+    assert files[3] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/images/285a92db-bc64-240d-50c2-3212d3973566.jpg'
+    assert files[4] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/images/6a4ddab1-93b4-b2e2-30c5-16b58f46d0d0.jpg'
+    assert files[5] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/images/a120df7c-51ec-b22e-d012-c9ee745fcc8e.jpg'
+    assert files[6] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/model.weights'
+    assert files[7] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/names.txt'
+    assert files[8] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/training.cfg'
 
 
 @pytest.mark.asyncio
-async def test_create_train_and_test_file():
+async def test_create_train_and_test_file(create_project):
     assert len(test_helper.get_files_from_data_folder()) == 0
     darknet_trainer = test_helper.create_darknet_trainer()
     await test_helper.downlaod_data(darknet_trainer)
@@ -119,21 +126,21 @@ async def test_create_train_and_test_file():
         content = f.readlines()
 
     assert len(content) == 2
-    assert content[0] == f'{training.training_folder}/images/04e9b13d-9f5b-02c5-af46-5bf40b1ca0a7.jpg\n'
-    assert content[1] == f'{training.training_folder}/images/d99747e9-7c6f-5753-2769-4184f870f18b.jpg\n'
+    assert content[0] == f'{training.training_folder}/images/6a4ddab1-93b4-b2e2-30c5-16b58f46d0d0.jpg\n'
+    assert content[1] == f'{training.training_folder}/images/285a92db-bc64-240d-50c2-3212d3973566.jpg\n'
 
     with open(f'{training.training_folder}/test.txt', 'r') as f:
         content = f.readlines()
 
     assert len(content) == 1
-    assert content[0] == f'{training.training_folder}/images/94d1c90f-9ea5-abda-2696-6ab322d1e243.jpg\n'
+    assert content[0] == f'{training.training_folder}/images/a120df7c-51ec-b22e-d012-c9ee745fcc8e.jpg\n'
 
 
 def test_replace_classes_and_filters():
     target_folder = '/tmp/classes_test'
 
     def get_yolo_lines():
-        with open(f'{target_folder}/yolo.cfg', 'r') as f:
+        with open(f'{target_folder}/training.cfg', 'r') as f:
             return f.readlines()
 
     def assert_line_count(search_string, expected_count):
