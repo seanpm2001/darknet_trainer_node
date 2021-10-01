@@ -31,9 +31,6 @@ class DarknetTrainer(Trainer):
         training_data = self.training.data
         helper.remove_not_supported_category_types(self.training.data)
         yolo_helper.create_backup_dir(training_folder)
-        with open(training_folder + '/training.cfg', 'r') as f:
-            logging.info('before anything')
-            logging.info(f.read(1000))
 
         image_folder_for_training = yolo_helper.create_image_links(
             training_folder, image_folder, training_data.image_ids())
@@ -43,9 +40,6 @@ class DarknetTrainer(Trainer):
         yolo_helper.create_data_file(training_folder, len(box_category_names))
         yolo_helper.create_train_and_test_file(
             training_folder, image_folder_for_training, training_data.image_data)
-        with open(training_folder + '/training.cfg', 'r') as f:
-            logging.info('before cfg helper')
-            logging.info(f.read(1000))
 
         yolo_cfg_helper.replace_classes_and_filters(len(box_category_names), training_folder)
         yolo_cfg_helper.update_anchors(training_folder)
