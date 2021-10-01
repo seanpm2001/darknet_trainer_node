@@ -181,7 +181,7 @@ async def test_create_anchors(create_project):
     yolo_cfg_helper.update_anchors(training.training_folder)
 
     anchor_line = 'anchors = 10,14,  23,27,  37,58,  81,82,  135,169,  344,319'
-    original_cfg_file_path = yolo_cfg_helper._find_cfg_file(training.training_folder)
+    original_cfg_file_path = yolo_cfg_helper._find_cfg_file('tests/integration/data')
     _assert_anchors(original_cfg_file_path, anchor_line)
 
     new_anchors = 'anchors=1.6000,1.8400,1.6000,1.8400,1.6000,1.8400,1.6000,1.8400,1.6000,1.8400,1.6000,1.8400'
