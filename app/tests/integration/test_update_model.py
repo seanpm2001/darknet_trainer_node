@@ -6,8 +6,7 @@ import pytest
 import test_helper
 import model_updater
 import learning_loop_node.trainer.tests.trainer_test_helper as trainer_test_helper
-from learning_loop_node import node
-from darknet_trainer import DarknetTrainer
+from test_helper import create_darknet_trainer
 
 
 @pytest.fixture
@@ -39,27 +38,6 @@ async def test_parse_latest_confusion_matrix(downloader: Downloader):
 
     weightfile = new_model['weightfile']
     assert weightfile == 'backup/tiny_yolo_best_mAP_0.000000_iteration_1088_avgloss_-nan_.weights'
-
-
-@pytest.mark.parametrize("filename,is_valid_model", [
-    ('last_training.log', True),
-    ('last_training_missing_weightfile.log', False),
-    ('last_training_missing_confusion_matrix.log', False)
-])
-@pytest.mark.asyncio
-async def test_iteration_needs_weightfile_to_be_valid(filename: str, is_valid_model: bool, downloader: Downloader):
-    model_id = await trainer_test_helper.assert_upload_model(
-        ['tests/integration/data/training.cfg', 'tests/integration/data/model.weights'])
-    context = Context(organization='zauberzeug', project='pytest')
-    training = Trainer.generate_training(context, {'id': 'some_uuid'})
-    training.data = await downloader.download_data(training.images_folder, training.training_folder, model_id)
-    trainer = DarknetTrainer()
-    trainer.training = training
-
-    shutil.copy(f'tests/integration/data/{filename}', f'{training.training_folder}/last_training.log')
-
-    new_model = trainer.get_new_model()
-    assert is_valid_model == (new_model is not None)
 
 
 def get_box_categories():
