@@ -4,6 +4,7 @@ from learning_loop_node import loop
 import pytest
 from learning_loop_node.globals import GLOBALS
 import shutil
+import asyncio
 
 icecream.install()
 logging.basicConfig(level=logging.INFO)
@@ -17,3 +18,11 @@ def data_folder():
     shutil.rmtree(GLOBALS.data_folder, ignore_errors=True)
     yield
     shutil.rmtree(GLOBALS.data_folder, ignore_errors=True)
+
+
+@pytest.fixture(scope="session")
+def event_loop(request):
+    """Create an instance of the default event loop for each test case."""
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    yield loop
+    loop.close()
