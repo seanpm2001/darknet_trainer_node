@@ -41,7 +41,7 @@ async def test_yolo_box_creation(create_project):
 
 def test_create_names_file(data_folder):
     assert len(test_helper.get_files_from_data_folder()) == 0
-    _, _, training_folder = trainer_test_helper.create_needed_folders(data_folder)
+    _, _, training_folder = trainer_test_helper.create_needed_folders(GLOBALS.data_folder)
 
     yolo_helper.create_names_file(training_folder, ['category_1', 'category_2'])
     files = test_helper.get_files_from_data_folder()
@@ -58,7 +58,7 @@ def test_create_names_file(data_folder):
 
 def test_create_data_file(data_folder):
     assert len(test_helper.get_files_from_data_folder()) == 0
-    _, _, training_folder = trainer_test_helper.create_needed_folders(data_folder)
+    _, _, training_folder = trainer_test_helper.create_needed_folders(GLOBALS.data_folder)
 
     yolo_helper.create_data_file(training_folder, 1)
     files = test_helper.get_files_from_data_folder()
@@ -110,7 +110,7 @@ async def test_create_train_and_test_file(create_project):
     training_data = training.data
 
     images_folder_for_training = yolo_helper.create_image_links(
-        training.  training_folder, training.images_folder, training_data.image_ids())
+        training.training_folder, training.images_folder, training_data.image_ids())
 
     yolo_helper.create_train_and_test_file(
         training.training_folder, images_folder_for_training, training_data.image_data)
