@@ -12,7 +12,8 @@ from learning_loop_node.globals import GLOBALS
 
 
 def get_files_from_data_folder():
-    files = [entry for entry in glob(f'{GLOBALS.data_folder}/**/*', recursive=True) if os.path.isfile(entry)]
+    files = [entry for entry in glob(f'{GLOBALS.data_folder}/**/*', recursive=True)
+             if os.path.isfile(entry) or os.path.islink(entry)]
     files.sort()
     return files
 

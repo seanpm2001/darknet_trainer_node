@@ -19,20 +19,21 @@ async def test_yolo_box_creation(create_project):
     training_data = training.data
 
     image_folder_for_training = yolo_helper.create_image_links(
-        training. training_folder, training.images_folder, training_data.image_ids())
+        f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid', f'{GLOBALS.data_folder}/zauberzeug/pytest/images', training_data.image_ids())
 
-    await yolo_helper.update_yolo_boxes(image_folder_for_training,  training_data)
+    await yolo_helper.update_yolo_boxes(image_folder_for_training, training_data)
 
-    # 3 images, 3 image_links, 3 txt files, names.txt training.cfg, model.weights
-    assert len(test_helper.get_files_from_data_folder()) == 12
+    print(test_helper.get_files_from_data_folder())
+    # 3 image_links, 3 txt files
+    assert len(test_helper.get_files_from_data_folder()) == 6
 
     first_image_id = training_data.image_ids()[0]
     with open(f'{image_folder_for_training}/{first_image_id}.txt', 'r') as f:
         yolo_content = f.read()
 
     assert yolo_content == '''0 0.725000 0.721250 0.050000 0.057500
-1 0.075000 0.201250 0.050000 0.057500
-1 0.350000 0.317083 0.050000 0.057500'''
+2 0.075000 0.201250 0.050000 0.057500
+2 0.350000 0.317083 0.050000 0.057500'''
 
 #     assert yolo_content == '''0 0.525000 0.836250 0.050000 0.057500
 # 1 0.725000 0.490417 0.050000 0.057500
@@ -86,19 +87,17 @@ async def test_create_image_links(create_project):
     training_data = training.data
     training_id = training.id
 
-    yolo_helper.create_image_links(training.training_folder, training.images_folder, training_data.image_ids())
-
+    images_folder_for_training = yolo_helper.create_image_links(f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid',
+                                                                f'{GLOBALS.data_folder}/zauberzeug/pytest/images', training_data.image_ids())
+    print(test_helper.get_files_from_data_folder())
+    print(images_folder_for_training)
+    print(GLOBALS.data_folder)
     files = sorted(test_helper.get_files_from_data_folder())
-    assert len(files) == 9
-    assert files[0] == f'{GLOBALS.data_folder}/zauberzeug/pytest/images/285a92db-bc64-240d-50c2-3212d3973566.jpg'
-    assert files[1] == f'{GLOBALS.data_folder}/zauberzeug/pytest/images/6a4ddab1-93b4-b2e2-30c5-16b58f46d0d0.jpg'
-    assert files[2] == f'{GLOBALS.data_folder}/zauberzeug/pytest/images/a120df7c-51ec-b22e-d012-c9ee745fcc8e.jpg'
-    assert files[3] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/images/285a92db-bc64-240d-50c2-3212d3973566.jpg'
-    assert files[4] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/images/6a4ddab1-93b4-b2e2-30c5-16b58f46d0d0.jpg'
-    assert files[5] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/images/a120df7c-51ec-b22e-d012-c9ee745fcc8e.jpg'
-    assert files[6] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/model.weights'
-    assert files[7] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/names.txt'
-    assert files[8] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/{training_id}/training.cfg'
+    print(files)
+    assert len(files) == 3
+    assert files[0] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/285a92db-bc64-240d-50c2-3212d3973566.jpg'
+    assert files[1] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/6a4ddab1-93b4-b2e2-30c5-16b58f46d0d0.jpg'
+    assert files[2] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/a120df7c-51ec-b22e-d012-c9ee745fcc8e.jpg'
 
 
 @pytest.mark.asyncio
@@ -107,33 +106,36 @@ async def test_create_train_and_test_file(create_project):
     darknet_trainer = test_helper.create_darknet_trainer()
     await test_helper.downlaod_data(darknet_trainer)
     training = darknet_trainer.training
+    print(training.training_folder)
+    print(training.images_folder)
     training_data = training.data
 
     images_folder_for_training = yolo_helper.create_image_links(
-        training.training_folder, training.images_folder, training_data.image_ids())
+        f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid', f'{GLOBALS.data_folder}/zauberzeug/pytest/images', training_data.image_ids())
 
     yolo_helper.create_train_and_test_file(
-        training.training_folder, images_folder_for_training, training_data.image_data)
+        f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid', images_folder_for_training, training_data.image_data)
 
     files = [file for file in test_helper.get_files_from_data_folder() if file.endswith('test.txt')
              or file.endswith('train.txt')]
+    print(files)
     assert len(files) == 2
     test_file = files[0]
     train_file = files[1]
     assert train_file.endswith('train.txt')
     assert test_file.endswith('test.txt')
-    with open(f'{training.training_folder}/train.txt', 'r') as f:
+    with open(f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/train.txt', 'r') as f:
         content = f.readlines()
 
     assert len(content) == 2
-    assert content[0] == f'{training.training_folder}/images/6a4ddab1-93b4-b2e2-30c5-16b58f46d0d0.jpg\n'
-    assert content[1] == f'{training.training_folder}/images/285a92db-bc64-240d-50c2-3212d3973566.jpg\n'
+    assert content[0] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/6a4ddab1-93b4-b2e2-30c5-16b58f46d0d0.jpg\n'
+    assert content[1] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/285a92db-bc64-240d-50c2-3212d3973566.jpg\n'
 
-    with open(f'{training.training_folder}/test.txt', 'r') as f:
+    with open(f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/test.txt', 'r') as f:
         content = f.readlines()
 
     assert len(content) == 1
-    assert content[0] == f'{training.training_folder}/images/a120df7c-51ec-b22e-d012-c9ee745fcc8e.jpg\n'
+    assert content[0] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/a120df7c-51ec-b22e-d012-c9ee745fcc8e.jpg\n'
 
 
 def test_replace_classes_and_filters():
