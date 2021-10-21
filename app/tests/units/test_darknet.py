@@ -2,6 +2,7 @@ import pytest
 import shutil
 import pytest
 from learning_loop_node.globals import GLOBALS
+from learning_loop_node.trainer.training_data import TrainingData
 import yolo_helper
 import yolo_cfg_helper
 import os
@@ -197,6 +198,22 @@ def test_find_cfg_file():
     shutil.copy(f'tests/integration/data/training.cfg', f'{training_path}/training.cfg')
     found_cfg_file = yolo_cfg_helper._find_cfg_file(training_path)
     assert 'training.cfg' in found_cfg_file
+
+
+def test_convert_points_into_small_boxes():
+
+    traings_data = TrainingData(image_data=[
+        {
+            'point_annotations': [{'x': 100, 'y': 100, 'category_id': 42}],
+            'box_annotations': []
+        }],
+        categories=[])
+
+    yolo_helper.convert_points_into_small_boxes(traings_data)
+    boxes = traings_data.image_data[0].get('box_annotations', [])
+    assert len(boxes) == 1
+
+    assert boxes[0] == {'x': 90, 'y': 90, 'width': 20, 'height': 20, 'category_id': 42}
 
 
 def _assert_anchors(cfg_file_path: str, anchor_line: str) -> None:

@@ -20,4 +20,4 @@ def get_training_path_by_id(trainings_id: str) -> str:
 
 
 def remove_not_supported_category_types(training_data: TrainingData):
-    training_data.categories = [c for c in training_data.categories if c['type'] == 'box']
+    training_data.categories = [c for c in training_data.categories if c['type'] in ['box', 'point']]

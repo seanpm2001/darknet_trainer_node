@@ -4,7 +4,6 @@ from typing import List
 import helper
 import os
 from log_parser import LogParser
-from retry import retry
 
 
 def to_yolo(learning_loop_box, image_width, image_height, categories):
@@ -34,6 +33,19 @@ def create_data_file(training_folder: str, number_of_classes: int) -> None:
         f.write('\n'.join(data_object))
 
 
+def convert_points_into_small_boxes(training_data: TrainingData, size=20):
+    for image in training_data.image_data:
+        for point in image['point_annotations']:
+            small_box = {
+                'x': point['x']-(size / 2),
+                'y': point['y']-(size / 2),
+                'width': size,
+                'height': size,
+                'category_id': point['category_id']
+            }
+            image['box_annotations'].append(small_box)
+
+
 async def update_yolo_boxes(image_folder_for_training: str, training_data: TrainingData) -> None:
     category_ids = helper.get_box_category_ids(training_data)
 
@@ -43,11 +55,6 @@ async def update_yolo_boxes(image_folder_for_training: str, training_data: Train
 
         yolo_boxes = []
         for box in image['box_annotations']:
-            #size = 20
-            # box['x'], box['y'] = (np.average([box['x'], box['x'] + box['width']])-size/2,
-            #                      np.average([box['y'], box['y'] + box['height']])-size/2)
-            #box['width'] = size
-            #box['height'] = size
             yolo_box = to_yolo(box, image_width, image_height, category_ids)
             yolo_boxes.append(yolo_box)
 
@@ -99,7 +106,6 @@ def parse_yolo_lines(lines: str, iteration: int = None) -> dict:
     else:
         data.update(parser.parse_training_status())
 
-    # print(data)
     return data
 
 

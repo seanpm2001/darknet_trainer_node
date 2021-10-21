@@ -8,7 +8,6 @@ import helper
 import yolo_cfg_helper
 import os
 import model_updater
-import logging
 
 
 class DarknetTrainer(Trainer):
@@ -30,6 +29,7 @@ class DarknetTrainer(Trainer):
         image_folder = self.training.images_folder
         training_data = self.training.data
         helper.remove_not_supported_category_types(self.training.data)
+        yolo_helper.convert_points_into_small_boxes(training_data)
         yolo_helper.create_backup_dir(training_folder)
 
         image_folder_for_training = yolo_helper.create_image_links(
