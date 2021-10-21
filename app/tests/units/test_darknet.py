@@ -18,14 +18,16 @@ async def test_yolo_box_creation(create_project):
     training = darknet_trainer.training
     training_data = training.data
 
+    # 3 images, 3 model files
+    assert len(test_helper.get_files_from_data_folder()) == 6
+
     image_folder_for_training = yolo_helper.create_image_links(
         f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid', f'{GLOBALS.data_folder}/zauberzeug/pytest/images', training_data.image_ids())
 
     await yolo_helper.update_yolo_boxes(image_folder_for_training, training_data)
 
-    print(test_helper.get_files_from_data_folder())
-    # 3 image_links, 3 txt files
-    assert len(test_helper.get_files_from_data_folder()) == 6
+    # # 3 images, 3 model files,   3 image_links, 3 txt files
+    assert len(test_helper.get_files_from_data_folder()) == 12
 
     first_image_id = training_data.image_ids()[0]
     with open(f'{image_folder_for_training}/{first_image_id}.txt', 'r') as f:
@@ -34,10 +36,6 @@ async def test_yolo_box_creation(create_project):
     assert yolo_content == '''0 0.725000 0.721250 0.050000 0.057500
 2 0.075000 0.201250 0.050000 0.057500
 2 0.350000 0.317083 0.050000 0.057500'''
-
-#     assert yolo_content == '''0 0.525000 0.836250 0.050000 0.057500
-# 1 0.725000 0.490417 0.050000 0.057500
-# 1 0.100000 0.894583 0.050000 0.057500'''
 
 
 def test_create_names_file(data_folder):
@@ -83,21 +81,23 @@ async def test_create_image_links(create_project):
 
     darknet_trainer = test_helper.create_darknet_trainer()
     await test_helper.downlaod_data(darknet_trainer)
+    # 3 images, 3 model files
+    assert len(test_helper.get_files_from_data_folder()) == 6
+
     training = darknet_trainer.training
     training_data = training.data
     training_id = training.id
 
-    images_folder_for_training = yolo_helper.create_image_links(f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid',
-                                                                f'{GLOBALS.data_folder}/zauberzeug/pytest/images', training_data.image_ids())
-    print(test_helper.get_files_from_data_folder())
-    print(images_folder_for_training)
-    print(GLOBALS.data_folder)
-    files = sorted(test_helper.get_files_from_data_folder())
-    print(files)
-    assert len(files) == 3
-    assert files[0] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/285a92db-bc64-240d-50c2-3212d3973566.jpg'
-    assert files[1] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/6a4ddab1-93b4-b2e2-30c5-16b58f46d0d0.jpg'
-    assert files[2] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/a120df7c-51ec-b22e-d012-c9ee745fcc8e.jpg'
+    _ = yolo_helper.create_image_links(f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid',
+                                       f'{GLOBALS.data_folder}/zauberzeug/pytest/images', training_data.image_ids())
+    files = test_helper.get_files_from_data_folder()
+
+    # 3 images, 3 model files,   3 image links
+    assert len(files) == 9
+
+    assert f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/285a92db-bc64-240d-50c2-3212d3973566.jpg' in files
+    assert f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/6a4ddab1-93b4-b2e2-30c5-16b58f46d0d0.jpg' in files
+    assert f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/a120df7c-51ec-b22e-d012-c9ee745fcc8e.jpg' in files
 
 
 @pytest.mark.asyncio

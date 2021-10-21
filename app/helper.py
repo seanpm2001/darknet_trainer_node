@@ -14,7 +14,7 @@ def get_box_category_names(training_data: TrainingData) -> List[str]:
 
 def get_training_path_by_id(trainings_id: str) -> str:
     trainings = [training_path for training_path in glob(
-        f'/data/**/trainings/{trainings_id}', recursive=True)]
+        f'{GLOBALS.data_folder}/**/trainings/{trainings_id}', recursive=True)]
     assert len(trainings) == 1, f"Training with id '{trainings_id}' does not exist."
     return trainings[0]
 
