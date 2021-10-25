@@ -35,7 +35,6 @@ async def test_start_stop_training():
     )
 
     darknet_trainer = darknet_test_helper.create_darknet_trainer()
-    downloader = darknet_test_helper.create_downloader()
 
     assert darknet_trainer.get_error() is None
     context = Context(organization='zauberzeug', project='pytest')
@@ -49,7 +48,7 @@ async def test_start_stop_training():
 
 
 @pytest.mark.asyncio
-async def test_get_model_files(create_project):
+async def test_get_model_files():
     darknet_trainer = darknet_test_helper.create_darknet_trainer()
     await darknet_test_helper.downlaod_data(darknet_trainer)
     shutil.copy('tests/integration/data/model.weights',
@@ -65,7 +64,7 @@ async def test_get_model_files(create_project):
 
 
 @pytest.mark.asyncio
-async def test_get_new_model(create_project):
+async def test_get_new_model():
     darknet_trainer = darknet_test_helper.create_darknet_trainer()
     await darknet_test_helper.downlaod_data(darknet_trainer)
 
