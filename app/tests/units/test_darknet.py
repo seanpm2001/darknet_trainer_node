@@ -12,7 +12,7 @@ from tests import test_helper
 from learning_loop_node.conftest import create_project
 
 
-def test_create_names_file(data_folder):
+def test_create_names_file():
     assert len(test_helper.get_files_from_data_folder()) == 0
     _, _, training_folder = trainer_test_helper.create_needed_folders(GLOBALS.data_folder)
 
@@ -29,7 +29,7 @@ def test_create_names_file(data_folder):
     assert names[1] == 'category_2'
 
 
-def test_create_data_file(data_folder):
+def test_create_data_file():
     assert len(test_helper.get_files_from_data_folder()) == 0
     _, _, training_folder = trainer_test_helper.create_needed_folders(GLOBALS.data_folder)
 
