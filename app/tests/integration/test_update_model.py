@@ -6,7 +6,7 @@ import pytest
 import test_helper
 import model_updater
 import learning_loop_node.trainer.tests.trainer_test_helper as trainer_test_helper
-from test_helper import create_darknet_trainer
+from learning_loop_node.conftest import create_project
 
 
 @pytest.fixture
@@ -15,7 +15,7 @@ def downloader() -> Downloader:
 
 
 @pytest.mark.asyncio
-async def test_parse_latest_confusion_matrix(downloader: Downloader):
+async def test_parse_latest_confusion_matrix(downloader: Downloader, create_project):
     model_id = await trainer_test_helper.assert_upload_model(
         ['tests/integration/data/training.cfg', 'tests/integration/data/model.weights'])
     context = Context(organization='zauberzeug', project='pytest')
