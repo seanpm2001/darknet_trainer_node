@@ -129,8 +129,8 @@ async def test_create_train_and_test_file(create_project):
         content = f.readlines()
 
     assert len(content) == 2
-    assert content[0] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/6a4ddab1-93b4-b2e2-30c5-16b58f46d0d0.jpg\n'
-    assert content[1] == f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/285a92db-bc64-240d-50c2-3212d3973566.jpg\n'
+    assert f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/6a4ddab1-93b4-b2e2-30c5-16b58f46d0d0.jpg\n' in content
+    assert f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/images/285a92db-bc64-240d-50c2-3212d3973566.jpg\n' in content
 
     with open(f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid/test.txt', 'r') as f:
         content = f.readlines()
