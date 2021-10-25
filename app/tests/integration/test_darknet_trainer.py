@@ -158,37 +158,3 @@ def create_training(training_data: TrainingData) -> Training:
     shutil.copy('tests/integration/data/training.cfg',
                 f'{training.training_folder}/training.cfg')
     return training
-
-
-@pytest.mark.asyncio
-async def test_point_is_added_when_training_starts():
-    model_id = await trainer_test_helper.assert_upload_model(
-        ['tests/integration/data/training.cfg', 'tests/integration/data/model.weights'],
-        'yolo'
-    )
-    darknet_trainer = darknet_test_helper.create_darknet_trainer()
-    context = Context(organization='zauberzeug', project='pytest')
-
-    await darknet_trainer.begin_training(context=context, source_model={'id': model_id})
-    await asyncio.sleep(1)
-    assert darknet_trainer.get_error() is None
-    assert 'CUDA-version' in darknet_trainer.get_log()
-
-    training_data = darknet_trainer.training.data
-    assert len(training_data.image_data) == 3
-    print(*training_data.categories, sep='\n')
-
-    assert len(training_data.categories) == 3, 'There should be 3 categories, 2 boxes and 1 point'
-
-    point_categories = [c for c in training_data.categories if c['type']
-                        == 'point']
-    assert len(point_categories) == 1, 'There should be one point category'
-    point_category = point_categories[0]
-
-    assert len(training_data.image_data[0]['point_annotations']) == 1
-    assert len(training_data.image_data[0]['box_annotations']
-               ) == 2, 'There should be two box_annotations. One original and one small_box converted from point'
-
-    assert training_data.image_data[0]['box_annotations'][1]['category_id'] == point_category['id']
-
-    darknet_trainer.stop_training()
