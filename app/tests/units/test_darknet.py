@@ -12,33 +12,6 @@ from tests import test_helper
 from learning_loop_node.conftest import create_project
 
 
-@pytest.mark.asyncio
-async def test_yolo_box_creation(create_project):
-    darknet_trainer = test_helper.create_darknet_trainer()
-    await test_helper.downlaod_data(darknet_trainer)
-    training = darknet_trainer.training
-    training_data = training.data
-
-    # 3 images, 3 model files
-    assert len(test_helper.get_files_from_data_folder()) == 6
-
-    image_folder_for_training = yolo_helper.create_image_links(
-        f'{GLOBALS.data_folder}/zauberzeug/pytest/trainings/some_model_uuid', f'{GLOBALS.data_folder}/zauberzeug/pytest/images', training_data.image_ids())
-
-    await yolo_helper.update_yolo_boxes(image_folder_for_training, training_data)
-
-    # # 3 images, 3 model files,   3 image_links, 3 txt files
-    assert len(test_helper.get_files_from_data_folder()) == 12
-
-    first_image_id = training_data.image_ids()[0]
-    with open(f'{image_folder_for_training}/{first_image_id}.txt', 'r') as f:
-        yolo_content = f.read()
-
-    assert yolo_content == '''0 0.725000 0.721250 0.050000 0.057500
-2 0.075000 0.201250 0.050000 0.057500
-2 0.350000 0.317083 0.050000 0.057500'''
-
-
 def test_create_names_file(data_folder):
     assert len(test_helper.get_files_from_data_folder()) == 0
     _, _, training_folder = trainer_test_helper.create_needed_folders(GLOBALS.data_folder)

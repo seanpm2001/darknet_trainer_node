@@ -1,19 +1,17 @@
 from learning_loop_node.context import Context
 import pytest
 from typing import Generator
+from learning_loop_node.globals import GLOBALS
 import learning_loop_node.tests.test_helper as test_helper
 import learning_loop_node.trainer.tests.trainer_test_helper as trainer_test_helper
+from learning_loop_node.trainer.training import Training
+from learning_loop_node.trainer.training_data import TrainingData
 import tests.test_helper as darknet_test_helper
 import shutil
 import os
 import asyncio
 from icecream import ic
-
-
-@pytest.fixture()
-def web() -> Generator:
-    with test_helper.LiveServerSession() as c:
-        yield c
+from tests import test_helper as darknet_test_helper
 
 
 @pytest.fixture(autouse=True, scope='module')
@@ -91,6 +89,78 @@ async def test_get_new_model():
 
 
 @pytest.mark.asyncio
+async def test_points_creation():
+    training_data = TrainingData(image_data=[
+        {
+            'id': 'some_image_id',
+            'point_annotations': [{'x': 100, 'y': 100, 'category_id': 'point_1_id'}],
+            'box_annotations': [],
+
+            'width': 1000,
+            'height': 1000,
+            'set': 'train'
+
+        }],
+        categories=[{'id': 'point_1_id', 'name': 'point_1', 'type': 'point'}]
+    )
+    darknet_trainer = darknet_test_helper.create_darknet_trainer()
+    darknet_trainer.training = create_training(training_data)
+
+    await darknet_trainer.prepare_training()
+
+    with open(f'{darknet_trainer.training.training_folder}/images/some_image_id.txt', 'r') as f:
+        content = f.read()
+        assert content == '0 0.100000 0.100000 0.020000 0.020000'
+
+
+@pytest.mark.asyncio
+async def test_box_creation():
+    training_data = TrainingData(image_data=[
+        {
+            'id': 'some_image_id',
+            'point_annotations': [],
+            'box_annotations': [{'x': 90, 'y': 90, 'width': 20, 'height': 20, 'category_id': 'box_1_id'}],
+
+            'width': 1000,
+            'height': 1000,
+            'set': 'train'
+
+        }],
+        categories=[{'id': 'box_1_id', 'name': 'box_1', 'type': 'box'}]
+    )
+
+    darknet_trainer = darknet_test_helper.create_darknet_trainer()
+    darknet_trainer.training = create_training(training_data)
+
+    await darknet_trainer.prepare_training()
+
+    with open(f'{darknet_trainer.training.training_folder}/images/some_image_id.txt', 'r') as f:
+        content = f.read()
+        assert content == '0 0.100000 0.100000 0.020000 0.020000'
+
+
+def create_training(training_data: TrainingData) -> Training:
+    data_folder = GLOBALS.data_folder
+
+    images_folder = f"{data_folder}/images"
+    os.makedirs(images_folder)
+    image_path = f'{images_folder}/project_folder.jpg'
+    open(image_path, 'a').close()
+
+    project_folder = f'{data_folder}/some_project'
+    os.makedirs(project_folder)
+    training_folder = f'{project_folder}/some_training_id'
+    os.makedirs(training_folder)
+
+    training = Training(id='some_training_id', context=Context(
+        project='p', organization='o'), images_folder=images_folder, training_folder=training_folder, project_folder=project_folder, data=training_data)
+
+    shutil.copy('tests/integration/data/training.cfg',
+                f'{training.training_folder}/training.cfg')
+    return training
+
+
+@pytest.mark.asyncio
 async def test_point_is_added_when_training_starts():
     model_id = await trainer_test_helper.assert_upload_model(
         ['tests/integration/data/training.cfg', 'tests/integration/data/model.weights'],
@@ -122,4 +192,3 @@ async def test_point_is_added_when_training_starts():
     assert training_data.image_data[0]['box_annotations'][1]['category_id'] == point_category['id']
 
     darknet_trainer.stop_training()
-
