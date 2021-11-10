@@ -5,6 +5,7 @@ from darknet_trainer import DarknetTrainer
 import uvicorn
 import logging
 import os
+import backdoor_controls
 
 logging.basicConfig(level=logging.INFO)
 
@@ -24,6 +25,7 @@ async def shutdown():
 
     Thread(target=restart).start()
 
+node.include_router(backdoor_controls.router, prefix="")
 
 if __name__ == "__main__":
     import signal
