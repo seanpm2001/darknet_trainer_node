@@ -8,8 +8,7 @@ class LogParser:
     @staticmethod
     def extract_iteration_log(log: str) -> Optional[List[str]]:
         iterations = reversed(log.split('(next mAP calculation at '))
-        latest_best_mAP = next(
-            (i for i in iterations if 'New best mAP!' in i), '\n')
+        latest_best_mAP = next((i for i in iterations if 'New best mAP!' in i), '\n')
         return latest_best_mAP.splitlines()[:-1]
 
     def parse_mAP(self) -> Optional[dict]:
@@ -17,12 +16,9 @@ class LogParser:
         # e.g. "mean average precision (mAP@0.50) = 0.793866, or 79.39 % ""
         for line in self.iteration_log_lines:
             if line.strip().startswith(match):
-                mAP_percentage = line.split('mean average precision')[
-                    1].split('mAP@')[1].split(')')[0]
-                mAP = line.split('mean average precision')[
-                    1].split(' = ')[1].split(', ')[0]
+                mAP_percentage = line.split('mean average precision')[1].split('mAP@')[1].split(')')[0]
+                mAP = line.split('mean average precision')[1].split(' = ')[1].split(', ')[0]
                 return {"mAP": float(mAP), "mAP_percentage": float(mAP_percentage)}
-
         return None
 
     def parse_iteration(self) -> Optional[str]:
@@ -35,8 +31,6 @@ class LogParser:
         return None
 
     def parse_classes(self) -> List[dict]:
-        from icecream import ic
-        ic('\n'.join(self.iteration_log_lines))
         classes = []
         for line in self.iteration_log_lines:
             if line.startswith("class_id"):
